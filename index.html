@@ -55,6 +55,9 @@ button:focus-visible{outline:3px solid var(--signal);outline-offset:2px;}
 
 /* タイトル：記録会のプログラム */
 #title{justify-content:flex-start;background:none;overflow-y:auto;}
+/* 書体が届くまでカードを出さない（届いたらふわっと出す。届かなくても1.2秒で出す） */
+#title .tcard{transition:opacity .25s ease;}
+#title.fontwait .tcard{opacity:0;}
 .tcard{width:100%;max-width:460px;display:flex;flex-direction:column;margin-top:60px;} /* 右上の音ボタンとあける */
 .poster{background:#FBF8F1e0; /* すりガラス（backdrop-filter）は iPhone で時々カードごと描かれなくなるので使わない */border-radius:14px;padding:14px 18px 16px;box-shadow:0 6px 0 #0002;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;}
 .poster h1{font-family:var(--f-disp);font-weight:400;margin:0;line-height:1.04;color:var(--ink);font-size:clamp(44px,13.5vw,68px);}
@@ -181,7 +184,7 @@ button:focus-visible{outline:3px solid var(--signal);outline-offset:2px;}
 <div id="app">
   <canvas id="scene"></canvas>
 
-  <section id="title" class="screen">
+  <section id="title" class="screen fontwait">
     <div class="tcard">
       <div class="poster">
         <h1><span class="s">なんでも</span><span class="u">棒高跳び</span></h1>
@@ -766,8 +769,10 @@ function toDraw(){
 const cv = $('scene'), ctx = cv.getContext('2d');
 const scene = { mode:'title', anim:null, camX:null, camY:0, scale:60 };
 let VW=1, VH=1, DPR=1;
-function resize(){ DPR=Math.min(2,window.devicePixelRatio||1); VW=innerWidth; VH=innerHeight; cv.width=Math.round(VW*DPR); cv.height=Math.round(VH*DPR); if(!$('draw').hidden) updateStroke(); }
+// 画面の大きさは、実際に表示されているキャンバスの大きさを使う（iPhone では読み込み直後の innerHeight が実際とずれることがある）
+function resize(){ DPR=Math.min(2,window.devicePixelRatio||1); VW=cv.clientWidth||innerWidth; VH=cv.clientHeight||innerHeight; cv.width=Math.round(VW*DPR); cv.height=Math.round(VH*DPR); if(!$('draw').hidden) updateStroke(); }
 addEventListener('resize', resize);
+if(window.visualViewport) visualViewport.addEventListener('resize', resize);
 
 function makeAnim(itemId, st, bar, opt){
   const sim = simulate(ITEMS[itemId], st, { speedMul:CFG.speed, miracle:opt.miracle });
@@ -1327,6 +1332,7 @@ function drawWorld(A){
 // ===== 1回ぶんの再生 =====
 let rafT = performance.now();
 function frame(now){
+  if(cv.clientWidth !== VW || cv.clientHeight !== VH) resize();   // 大きさが変わったらすぐ合わせる（読み込み直後のずれもここで直る）
   const dt = Math.min(0.05, (now-rafT)/1000); rafT = now;
   ctx.setTransform(DPR,0,0,DPR,0,0);
   const A = scene.anim;
@@ -1549,6 +1555,8 @@ syncSnd(); $('snd').hidden = $('title').hidden;
 
 (()=>{ const lu = $('lineup'); ITEM_IDS.forEach(id=>{ const f = document.createElement('figure'); f.appendChild(iconCanvas(id, 50)); const c = document.createElement('figcaption'); c.textContent = ITEMS[id].name; f.appendChild(c); lu.appendChild(f); }); $('nItems').textContent = '全' + ITEM_IDS.length + '種'; })();
 resize(); startDemo(); requestAnimationFrame(frame);
+{ const show = ()=> $('title').classList.remove('fontwait');
+  try{ Promise.race([ Promise.all(["40px 'Mochiy Pop P One'", "800 16px 'M PLUS 2'", "400 14px 'M PLUS 2'", "800 20px 'Barlow Condensed'"].map(f=>document.fonts.load(f, 'なんでも棒高跳び竿は選べない。全12種スタート'))), new Promise(r=>setTimeout(r, 1200)) ]).then(show, show); }catch(e){ show(); } }
 // 記録画面のまま読み込み直されたとき（30分以内）は、記録画面から再開する
 try{ const sv = JSON.parse(sessionStorage.getItem(END_KEY)||'null');
   if(sv && Date.now()-sv.t < 30*60*1000 && Array.isArray(sv.log) && sv.log.length && sv.log.every(l=> ITEMS[l.item] && FORMS[l.form])){ G_.log = sv.log; G_.best = sv.best; toEnd(); endAt = 0; } }catch(e){}
