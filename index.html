@@ -54,20 +54,20 @@ button:focus-visible{outline:3px solid var(--signal);outline-offset:2px;}
 .btn:disabled{opacity:.35;cursor:default;transform:none;}
 
 /* タイトル：記録会のプログラム */
-#title{justify-content:flex-start;background:linear-gradient(#cfe3ecf4 0%,#cfe3ecdc 58%,#cfe3ec00 80%);overflow-y:auto;}
-.tcard{width:100%;max-width:460px;display:flex;flex-direction:column;margin-top:38px;}
-.poster{background:var(--paper);border-radius:14px;padding:14px 18px 16px;box-shadow:0 6px 0 #0002;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;}
+#title{justify-content:flex-start;background:none;overflow-y:auto;}
+.tcard{width:100%;max-width:460px;display:flex;flex-direction:column;margin-top:60px;} /* 右上の音ボタンとあける */
+.poster{background:#FBF8F1e0; /* すりガラス（backdrop-filter）は iPhone で時々カードごと描かれなくなるので使わない */border-radius:14px;padding:14px 18px 16px;box-shadow:0 6px 0 #0002;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;}
 .poster h1{font-family:var(--f-disp);font-weight:400;margin:0;line-height:1.04;color:var(--ink);font-size:clamp(44px,13.5vw,68px);}
 .poster h1 .s{display:block;font-size:.46em;letter-spacing:.08em;color:var(--tartan);margin-bottom:2px;}
 .poster h1 .u{background:linear-gradient(transparent 64%, var(--signal) 64% 90%, transparent 90%);padding-right:4px;}
 .lead{margin:0;font-size:15px;font-weight:800;color:var(--ink);}
 .lineup-h{display:flex;justify-content:space-between;align-items:baseline;border-top:2px dashed var(--line);padding-top:10px;font-size:11px;letter-spacing:.14em;color:var(--ink2);}
-.lineup-h b{font-family:var(--f-num);font-size:16px;letter-spacing:.04em;color:var(--ink);}
+.lineup-h b{font-size:13px;font-weight:800;letter-spacing:.06em;color:var(--ink);}
 .lineup{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px 6px;}
 .lineup figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:11px;white-space:nowrap;color:var(--ink2);text-align:center;line-height:1.15;min-width:0;}
 .lineup canvas{width:100%;max-width:min(40px, 5.6vh);height:auto;aspect-ratio:1;}
 .steps{display:flex;flex-direction:column;gap:4px;}
-.steps div{display:flex;align-items:center;gap:10px;background:#F1ECE0;border-radius:10px;padding:5px 12px;font-size:13px;line-height:1.45;}
+.steps div{display:flex;align-items:center;gap:10px;background:#EFE8DAcc;border-radius:10px;padding:5px 12px;font-size:13px;line-height:1.45;}
 .steps .ph{display:inline-block;}
 .steps b{flex:0 0 auto;width:14px;text-align:center;font-family:var(--f-num);font-size:22px;color:var(--tartan);line-height:1;}
 .steps .tx{min-width:0;}
@@ -186,7 +186,7 @@ button:focus-visible{outline:3px solid var(--signal);outline-offset:2px;}
       <div class="poster">
         <h1><span class="s">なんでも</span><span class="u">棒高跳び</span></h1>
         <p class="lead">竿は選べない。形だけ、描ける。</p>
-        <div class="lineup-h"><span>竿の種類（このうち1つが配られます）</span><b id="nItems">12種</b></div>
+        <div class="lineup-h"><span>竿の種類（このうち1つが配られます）</span><b id="nItems">全12種</b></div>
         <div class="lineup" id="lineup"></div>
         <div class="steps">
           <div><b>1</b><span class="tx"><span class="ph">竿が1つ</span><span class="ph">配られる</span></span></div>
@@ -1547,7 +1547,7 @@ function syncSnd(){ const b=$('snd'); b.querySelector('b').textContent = CFG.sou
 $('snd').onclick = ()=>{ CFG.sound=!CFG.sound; try{ localStorage.setItem('nandemo-vault-sound', CFG.sound?'on':'off'); }catch(e){} syncSnd(); if(CFG.sound) tone(880,0.08,'triangle',0.12); };
 syncSnd(); $('snd').hidden = $('title').hidden;
 
-(()=>{ const lu = $('lineup'); ITEM_IDS.forEach(id=>{ const f = document.createElement('figure'); f.appendChild(iconCanvas(id, 50)); const c = document.createElement('figcaption'); c.textContent = ITEMS[id].name; f.appendChild(c); lu.appendChild(f); }); $('nItems').textContent = ITEM_IDS.length + '種'; })();
+(()=>{ const lu = $('lineup'); ITEM_IDS.forEach(id=>{ const f = document.createElement('figure'); f.appendChild(iconCanvas(id, 50)); const c = document.createElement('figcaption'); c.textContent = ITEMS[id].name; f.appendChild(c); lu.appendChild(f); }); $('nItems').textContent = '全' + ITEM_IDS.length + '種'; })();
 resize(); startDemo(); requestAnimationFrame(frame);
 // 記録画面のまま読み込み直されたとき（30分以内）は、記録画面から再開する
 try{ const sv = JSON.parse(sessionStorage.getItem(END_KEY)||'null');
