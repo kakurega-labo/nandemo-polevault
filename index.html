@@ -1,0 +1,1559 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>なんでも棒高跳び</title>
+<meta name="description" content="竿は選べない。形だけ、描ける。配られた日用品（ものさし・傘・ストロー…）の形を指で描いて、棒高跳び。形と長さで、しなり方も跳び方も変わる。">
+<meta name="theme-color" content="#1D2433">
+<link rel="canonical" href="https://nandemo-polevault.pages.dev/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="なんでも棒高跳び">
+<meta property="og:title" content="なんでも棒高跳び">
+<meta property="og:description" content="竿は選べない。形だけ、描ける。配られた日用品（ものさし・傘・ストロー…）の形を指で描いて、棒高跳び。形と長さで、しなり方も跳び方も変わる。">
+<meta property="og:url" content="https://nandemo-polevault.pages.dev/">
+<meta property="og:image" content="https://nandemo-polevault.pages.dev/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="なんでも棒高跳び">
+<meta name="twitter:description" content="竿は選べない。形だけ、描ける。配られた日用品（ものさし・傘・ストロー…）の形を指で描いて、棒高跳び。形と長さで、しなり方も跳び方も変わる。">
+<meta name="twitter:image" content="https://nandemo-polevault.pages.dev/og.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+P+One&family=M+PLUS+2:wght@400;600;800&family=Barlow+Condensed:wght@600;800&display=swap">
+<style>
+/* 競技場の昼。トラックの赤土色、マットの青、バーの黄色。画面は競技場の場内表示と記録用紙 */
+:root{
+  --sky:#CFE3EC; --sky2:#EAF2F2;
+  --tartan:#C4553A; --tartan-d:#9E3F2A;
+  --ink:#1D2433; --ink2:#4A5468;
+  --paper:#FBF8F1; --line:#D9D2C2;
+  --mat:#2E5FA8; --signal:#F2C230; --ok:#2F8F5B; --ng:#C23B2A;
+  --f-disp:'Mochiy Pop P One','M PLUS 2',system-ui,sans-serif;
+  --f-body:'M PLUS 2','Hiragino Sans','Yu Gothic',system-ui,sans-serif;
+  --f-num:'Barlow Condensed','M PLUS 2',system-ui,sans-serif;
+  color-scheme: light;
+}
+html,body{height:100%;}
+body{margin:0;background:var(--sky);color:var(--ink);font-family:var(--f-body);overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;}
+[hidden]{display:none!important;}
+#app{position:fixed;inset:0;}
+#scene{position:absolute;inset:0;width:100%;height:100%;display:block;}
+button{font-family:var(--f-body);touch-action:manipulation;cursor:pointer;}
+button:focus-visible{outline:3px solid var(--signal);outline-offset:2px;}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  padding-top:max(12px, env(safe-area-inset-top,0px));padding-bottom:max(12px, env(safe-area-inset-bottom,0px));
+  padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px));box-sizing:border-box;}
+.btn{border:0;border-radius:12px;padding:14px 22px;font-size:17px;font-weight:800;background:var(--ink);color:var(--paper);box-shadow:0 3px 0 #0007;}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #0007;}
+.btn.sub{background:var(--paper);color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink),0 3px 0 #0003;}
+.btn.go{background:var(--tartan);}
+.btn:disabled{opacity:.35;cursor:default;transform:none;}
+
+/* タイトル：記録会のプログラム */
+#title{justify-content:flex-start;background:linear-gradient(#cfe3ecf4 0%,#cfe3ecdc 58%,#cfe3ec00 80%);overflow-y:auto;}
+.tcard{width:100%;max-width:460px;display:flex;flex-direction:column;margin-top:38px;}
+.poster{background:var(--paper);border-radius:14px;padding:14px 18px 16px;box-shadow:0 6px 0 #0002;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;}
+.poster h1{font-family:var(--f-disp);font-weight:400;margin:0;line-height:1.04;color:var(--ink);font-size:clamp(44px,13.5vw,68px);}
+.poster h1 .s{display:block;font-size:.46em;letter-spacing:.08em;color:var(--tartan);margin-bottom:2px;}
+.poster h1 .u{background:linear-gradient(transparent 64%, var(--signal) 64% 90%, transparent 90%);padding-right:4px;}
+.lead{margin:0;font-size:15px;font-weight:800;color:var(--ink);}
+.lineup-h{display:flex;justify-content:space-between;align-items:baseline;border-top:2px dashed var(--line);padding-top:10px;font-size:11px;letter-spacing:.14em;color:var(--ink2);}
+.lineup-h b{font-family:var(--f-num);font-size:16px;letter-spacing:.04em;color:var(--ink);}
+.lineup{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px 6px;}
+.lineup figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:11px;white-space:nowrap;color:var(--ink2);text-align:center;line-height:1.15;min-width:0;}
+.lineup canvas{width:100%;max-width:min(40px, 5.6vh);height:auto;aspect-ratio:1;}
+.steps{display:flex;flex-direction:column;gap:4px;}
+.steps div{display:flex;align-items:center;gap:10px;background:#F1ECE0;border-radius:10px;padding:5px 12px;font-size:13px;line-height:1.45;}
+.steps .ph{display:inline-block;}
+.steps b{flex:0 0 auto;width:14px;text-align:center;font-family:var(--f-num);font-size:22px;color:var(--tartan);line-height:1;}
+.steps .tx{min-width:0;}
+.btn.big{font-size:20px;padding:13px;}
+
+/* 描く画面 */
+#draw{justify-content:flex-start;background:#d6e6edf0;}
+.board{width:100%;max-width:760px;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:8px;}
+.bar-info{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--ink);color:var(--paper);border-radius:12px;padding:6px 14px;}
+.bar-info .lbl{font-size:11px;letter-spacing:.12em;opacity:.75;}
+.bar-info .h{font-family:var(--f-num);font-weight:800;font-size:30px;line-height:1;color:var(--signal);font-variant-numeric:tabular-nums;}
+.tries{display:flex;gap:6px;align-items:center;}
+.tries i{width:14px;height:14px;border-radius:50%;border:2px solid var(--paper);display:block;box-sizing:border-box;}
+.tries i.x{background:var(--ng);border-color:var(--ng);}
+.tries i.now{background:var(--paper);}
+.cards{display:flex;gap:8px;}
+.icard{flex:1 1 0;min-width:0;background:var(--paper);border-radius:12px;padding:6px 10px;display:flex;gap:10px;align-items:center;border:0;text-align:left;color:var(--ink);box-shadow:inset 0 0 0 2px var(--line);}
+.icard canvas{width:48px;height:48px;flex:0 0 auto;}
+.icard .nm{font-family:var(--f-disp);font-size:20px;line-height:1.2;}
+.icard .ey{font-size:11px;letter-spacing:.1em;color:var(--ink2);}
+.icard .ht{font-size:12px;color:var(--ink2);line-height:1.4;}
+.icard.sel{box-shadow:inset 0 0 0 3px var(--tartan);}
+.icard.pick{cursor:pointer;}
+.cards.many{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;}
+.cards.many .icard{flex-direction:column;text-align:center;padding:4px 2px;gap:0;}
+.cards.many .icard canvas{width:34px;height:34px;}
+.cards.many .icard .ey{display:none;}
+.cards.many .icard .ht{display:none;}
+.cards.many .icard .nm{font-size:10px;font-family:var(--f-body);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+.cards.two .icard .ht{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pad-wrap{flex:1 1 auto;min-height:200px;background:var(--paper);border-radius:14px;padding:8px 10px 10px;box-shadow:0 2px 0 #0002;display:flex;flex-direction:column;gap:6px;}
+.pad-head{height:24px;flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--ink2);gap:8px;}
+.pad-head b{color:var(--ink);font-weight:800;}
+#padBox{position:relative;flex:1 1 auto;min-height:0;}
+#formChip{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;background:var(--ink);color:var(--paper);border-radius:8px;padding:4px 10px;font-size:12px;line-height:1.4;}
+#formChip b{font-family:var(--f-disp);font-weight:400;font-size:15px;color:var(--signal);}
+#formChip{display:flex;align-items:center;height:42px;box-sizing:border-box;overflow:hidden;font-size:11.5px;line-height:1.45;padding:3px 10px;flex:0 0 auto;}
+#formChip b{margin-right:6px;font-size:14px;}
+#formChip.empty{background:#EDE7DA;color:var(--ink2);}
+#formChip.empty{display:flex;align-items:center;}
+#formChip .sen{display:inline-block;}
+/* 形の名前は縦まん中、説明は名前の右で折り返す */
+#formChip b{flex:0 0 auto;align-self:center;}
+#formChip .desc{flex:1 1 0;min-width:0;}
+#formChip:not(.empty){flex-wrap:nowrap;}
+#formChip.warn{background:#F6E1DA;color:var(--ng);font-weight:800;}
+.pad-head > span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.sheet .fm{font-size:11px;color:var(--ink2);margin-left:4px;}
+#pad{position:absolute;inset:0;width:100%;height:100%;touch-action:none;border-radius:8px;display:block;cursor:crosshair;}
+#stats{line-height:1;white-space:nowrap;font-family:var(--f-num);font-size:18px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;}
+.row{display:flex;gap:10px;}
+.row .btn{flex:1 1 0;}
+
+/* 跳ぶとき */
+#hud{pointer-events:none;justify-content:space-between;}
+.hud-top{max-width:100%;flex-wrap:wrap;display:flex;gap:8px;align-items:center;background:#1d2433d9;color:var(--paper);border-radius:10px;padding:6px 12px;font-size:14px;font-weight:800;}
+.hud-top .h{font-family:var(--f-num);font-size:22px;color:var(--signal);}
+.hud-top .barlbl{display:inline-flex;align-items:center;gap:4px;}
+.hud-top .h{line-height:1;}
+.meter{align-self:flex-start;background:#1d2433d9;color:var(--paper);border-radius:10px;padding:6px 12px;display:flex;gap:14px;align-items:baseline;}
+.meter .k{font-size:11px;opacity:.7;letter-spacing:.08em;}
+.meter .v{font-family:var(--f-num);font-weight:800;font-size:30px;font-variant-numeric:tabular-nums;}
+#res{position:absolute;left:50%;bottom:max(16px, env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(92vw,460px);background:var(--paper);border-radius:16px;padding:16px 18px;box-sizing:border-box;box-shadow:0 6px 0 #0003;display:flex;flex-direction:column;gap:8px;animation:pop .35s cubic-bezier(.2,1.6,.4,1);}
+@keyframes pop{from{transform:translateX(-50%) scale(.85);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
+#res .big{font-family:var(--f-disp);font-size:30px;line-height:1.2;}
+#res .big.ok{color:var(--ok);} #res .big.ng{color:var(--ng);}
+#res .sub{font-size:14px;color:var(--ink2);margin-top:-4px;}
+#res .nums{display:flex;gap:16px;flex-wrap:wrap;align-items:baseline;font-size:12px;color:var(--ink2);}
+#res .nums span{display:inline-flex;align-items:baseline;}
+#res .nums b.jp{font-family:var(--f-body);font-size:17px;line-height:1;}
+#res .nums b{font-family:var(--f-num);font-size:20px;color:var(--ink);font-weight:800;margin-left:4px;}
+#res .miracle{background:var(--signal);font-weight:800;font-size:13px;padding:2px 8px;border-radius:4px;align-self:flex-start;}
+
+/* 記録 */
+#end{justify-content:center;background:#cfe3ecc0;overflow-y:auto;}
+.sheet{width:100%;max-width:440px;background:var(--paper);border-radius:6px;padding:20px 20px 18px;box-sizing:border-box;box-shadow:0 8px 0 #0002;display:flex;flex-direction:column;gap:12px;}
+.sheet .ey{font-size:12px;letter-spacing:.2em;color:var(--ink2);}
+.sheet .rec{font-family:var(--f-num);font-weight:800;font-size:64px;line-height:.9;}
+.sheet .rec small{font-size:24px;margin-left:4px;}
+.sheet .with{font-size:15px;font-weight:800;}
+.sheet table{width:100%;border-collapse:collapse;font-size:14px;}
+.sheet td{padding:5px 4px;vertical-align:middle;}
+.sheet tr:nth-child(odd) td{background:#F3EEE3;}
+.sheet tr td:first-child{border-radius:8px 0 0 8px;} .sheet tr td:last-child{border-radius:0 8px 8px 0;}
+.sheet td.it{display:flex;align-items:center;gap:6px;}
+.sheet td.it canvas{width:24px;height:24px;flex:0 0 auto;}
+.mark{width:22px;height:22px;display:block;margin-left:auto;}
+.sheet td.n{font-family:var(--f-num);font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;}
+.sheet td.mk{width:30px;}
+.tbl{max-height:38vh;overflow-y:auto;}
+
+/* 共有 */
+.share{display:flex;gap:10px;}
+.share .btn{flex:1 1 0;padding:12px 10px;font-size:15px;}
+.btn.x{background:#000;}
+#shot{position:absolute;inset:0;z-index:40;background:#1d2433e6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;box-sizing:border-box;}
+#shot[hidden]{display:none;}
+#shot img{width:100%;max-width:600px;border-radius:6px;box-shadow:0 6px 24px #0006;}
+#shot p{margin:0;color:var(--paper);font-size:14px;font-weight:800;text-align:center;}
+#shot .row{width:100%;max-width:600px;}
+
+/* 音の切りかえ */
+#snd{position:absolute;top:calc(8px + env(safe-area-inset-top,0px));right:calc(8px + env(safe-area-inset-right,0px));z-index:30;min-width:40px;height:40px;padding:0 9px;border-radius:10px;border:0;background:#1d2433b0;color:var(--paper);font-size:12px;font-weight:800;letter-spacing:.04em;line-height:1.05;}
+#snd b{display:block;font-family:var(--f-num);font-size:13px;}
+#snd.off{opacity:.62;}
+@media (prefers-reduced-motion: reduce){ #res{animation:none;} }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <canvas id="scene"></canvas>
+
+  <section id="title" class="screen">
+    <div class="tcard">
+      <div class="poster">
+        <h1><span class="s">なんでも</span><span class="u">棒高跳び</span></h1>
+        <p class="lead">竿は選べない。形だけ、描ける。</p>
+        <div class="lineup-h"><span>竿の種類（このうち1つが配られます）</span><b id="nItems">12種</b></div>
+        <div class="lineup" id="lineup"></div>
+        <div class="steps">
+          <div><b>1</b><span class="tx"><span class="ph">竿が1つ</span><span class="ph">配られる</span></span></div>
+          <div><b>2</b><span class="tx"><span class="ph">指で</span><span class="ph">形を描く。</span><span class="ph">形と長さで</span><span class="ph">跳び方が</span><span class="ph">変わる</span></span></div>
+          <div><b>3</b><span class="tx"><span class="ph">1つの</span><span class="ph">高さに</span><span class="ph">3回まで。</span><span class="ph">跳べたら</span><span class="ph">バーが</span><span class="ph">上がる</span></span></div>
+        </div>
+        <button class="btn go big" id="bStart">スタート</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="draw" class="screen" hidden>
+    <div class="board">
+      <div class="bar-info">
+        <div><div class="lbl">バーの高さ</div><div class="h" id="dBar">2m00</div></div>
+        <div style="text-align:right"><div class="lbl" id="dTryLbl">1回目</div><div class="tries" id="dTries"></div></div>
+      </div>
+      <div class="cards" id="cards"></div>
+      <div class="pad-wrap">
+        <div class="pad-head"><span><b id="padItem">ものさし</b> の形を描く</span><span id="stats"></span></div>
+        <div id="formChip"></div><div id="padBox"><canvas id="pad"></canvas></div>
+      </div>
+      <div class="row">
+        <button class="btn sub" id="bClear">描き直す</button>
+        <button class="btn go" id="bJump" disabled>跳ぶ</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="hud" class="screen" hidden>
+    <div class="hud-top"><span id="hItem">ものさし</span><span class="barlbl">バー<span class="h" id="hBar">2m00</span></span><span id="hTry">1回目</span></div>
+    <div class="meter"><div><div class="k">いまの高さ</div><div class="v" id="hNow">0.00</div></div><div><div class="k">最高</div><div class="v" id="hPeak">0.00</div></div></div>
+  </section>
+  <div id="res" hidden></div>
+
+  <section id="end" class="screen" hidden>
+    <div class="sheet">
+      <div class="ey">今回の記録</div>
+      <div class="rec" id="eRec">—</div>
+      <div class="with" id="eWith"></div>
+      <div class="tbl"><table id="eTbl"></table></div>
+      <div class="share">
+        <button class="btn sub" id="bShare">画像を共有</button>
+        <button class="btn x" id="bPost">Xにポスト</button>
+      </div>
+      <div class="row">
+        <button class="btn sub" id="bTitle">タイトルへ</button>
+        <button class="btn go" id="bAgain">もう一度</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="shot" hidden><img id="shotImg" alt="記録の画像"><p>画像を長押し（右クリック）して保存できます</p><div class="row"><a class="btn sub" id="shotDl" download="nandemo-polevault.png" style="text-align:center;text-decoration:none">ダウンロード</a><button class="btn" id="shotClose">閉じる</button></div></div>
+  <button id="snd" aria-label="音の切りかえ">音<b>ON</b></button>
+</div>
+
+<script>
+// ===== 物理（なんでも棒高跳び） =====
+const G = 9.8;
+const ITEMS = {
+  monosashi:{ id:'monosashi',name:'ものさし', hint:'よくしなる。長すぎ・曲げすぎると折れる', K:18,  rigid:0.05, brk:0.32, dens:0.35 },
+  sao:     { id:'sao',     name:'物干し竿',   hint:'長くて硬い。しならない',               K:150, rigid:0.35, brk:0.60, dens:1.30 },
+  kasa:    { id:'kasa',    name:'傘',         hint:'硬め。いちばん上でひらく',             K:80,  rigid:0.25, brk:0.30, dens:0.60, special:'kasa' },
+  straw:   { id:'straw',   name:'ストロー',   hint:'やわらかい。たぶん無理',               K:6,   rigid:0.00, brk:0.13, dens:0.50, special:'miracle' },
+  take:    { id:'take',    name:'竹',         hint:'よくしなって、強い。いちばんまとも',   K:26,  rigid:0.03, brk:0.38, dens:0.45 },
+  tsuri:   { id:'tsuri',   name:'釣り竿',     hint:'とてもしなる。めったに折れない',       K:9,   rigid:0.00, brk:0.55, dens:0.20 },
+  houki:   { id:'houki',   name:'ほうき',     hint:'硬め。先がつっかえる',                 K:55,  rigid:0.45, brk:0.32, dens:0.80 },
+  hose:    { id:'hose',    name:'ホース',     hint:'ぐにゃぐにゃ。折れないけれど…',       K:2.5, rigid:0.00, brk:9.00, dens:0.90 },
+  enpitsu: { id:'enpitsu', name:'えんぴつ',   hint:'硬いけれど、ぽきっと折れる',           K:45,  rigid:0.20, brk:0.14, dens:0.40 },
+  ami:     { id:'ami',     name:'虫取り網',   hint:'細くて硬め。先に網',                   K:70,  rigid:0.30, brk:0.22, dens:0.35 },
+  magonote:{ id:'magonote',name:'孫の手',     hint:'軽くて硬め。背中もかける',             K:65,  rigid:0.30, brk:0.30, dens:0.25 },
+  tsuppari:{ id:'tsuppari',name:'つっぱり棒', hint:'ぐっと縮む。伸び縮みするので折れない', K:13,  rigid:0.30, brk:9.00, dens:0.60 },
+};
+const ITEM_IDS = Object.keys(ITEMS);
+
+// 形の種類
+const FORMS = {
+  straight: { name:'まっすぐ', desc:'ふつうに跳ぶ' },
+  bow:      { name:'弓なり',   desc:'しなりやすい。硬い竿でも戻されにくい' },
+  spring:   { name:'ばね',     desc:'ばねのように縮んで、上で弾む。折れにくい' },
+  hook:     { name:'かぎ',     desc:'曲げた端に手をかけて、高い所を持てる。助走は遅くなる' },
+};
+
+// 竿の向き：pts[0] を先（ボックスに突き立てる側）、最後を手で持つ側にそろえる。
+// 縦長に描いた竿は下の端を手で持つ（描いたとおり手から上へ伸びる）。横長なら左の端を持ち、右の端が先
+function orientStroke(pts){
+  if(!pts || pts.length < 2) return pts;
+  const a = pts[0], z = pts[pts.length-1];
+  const tall = Math.abs(a.y-z.y) >= Math.abs(a.x-z.x) * 0.6 && Math.abs(a.y-z.y) > 0.3;
+  const tipFirst = tall ? a.y > z.y : a.x > z.x;
+  return tipFirst ? pts : pts.slice().reverse();
+}
+// pts: [{x,y}] メートル。描いた線を、長さ・曲がり・形にする
+const MAX_POLE_L = 12; // m。竿の長さの上限。描くときもここで止まる
+function analyzeStroke(pts){
+  if(!pts || pts.length < 2) return null;
+  // 低い方の端を、地面につく側（先）にする
+  pts = orientStroke(pts);
+  let L = 0; const seg=[0];
+  for(let i=1;i<pts.length;i++){ L += Math.hypot(pts[i].x-pts[i-1].x, pts[i].y-pts[i-1].y); seg.push(L); }
+  if(L < 0.4) return null;
+  analyzeStroke.reason = '';
+  if(L > MAX_POLE_L + 1e-6){ analyzeStroke.reason = 'long'; return null; }   // 竿の長さの上限（極端に長い竿は、走るあいだにバーの先まで届く）
+  const N = 48, rs = [];
+  for(let k=0;k<=N;k++){
+    const s = L*k/N; let i=1; while(i<seg.length-1 && seg[i]<s) i++;
+    const t = (s-seg[i-1])/Math.max(1e-9, seg[i]-seg[i-1]);
+    rs.push({ x: pts[i-1].x+(pts[i].x-pts[i-1].x)*t, y: pts[i-1].y+(pts[i].y-pts[i-1].y)*t });
+  }
+  // 手で持つ点は描き終わりの端。両端が重なった（輪を閉じた）線は竿にしない
+  analyzeStroke.reason = '';
+  if(Math.hypot(rs[N].x-rs[0].x, rs[N].y-rs[0].y) < 0.6){ analyzeStroke.reason = 'closed'; return null; }
+  const handIdx = N, closed = false, shift = 0;
+  const a = rs[0];
+  const z = rs[handIdx];
+  const cx = z.x-a.x, cy = z.y-a.y, c0 = Math.hypot(cx,cy);
+  const ux = cx/c0, uy = cy/c0;
+  let off = rs.map(p => { const dx=p.x-a.x, dy=p.y-a.y; return { u:(dx*ux+dy*uy)/c0, d:(-dx*uy+dy*ux)/c0 }; });
+  let m = 0, side = 1; off.forEach(o=>{ if(Math.abs(o.d)>m){ m=Math.abs(o.d); side=Math.sign(o.d)||1; } });
+  if(m < 0.02) side = 1;
+  // 曲がり方
+  const dh = [];
+  for(let k=2;k<=N;k++){
+    const h1 = Math.atan2(rs[k-1].y-rs[k-2].y, rs[k-1].x-rs[k-2].x);
+    const h2 = Math.atan2(rs[k].y-rs[k-1].y, rs[k].x-rs[k-1].x);
+    let d = h2-h1; while(d>Math.PI) d-=2*Math.PI; while(d<-Math.PI) d+=2*Math.PI; dh.push(d);
+  }
+  const turn = dh.reduce((s,d)=>s+Math.abs(d),0);
+  const net = Math.abs(dh.reduce((s,d)=>s+d,0));
+  // 角のある形（L字など）は竿にしない：線の途中のどこかで、その前後それぞれ長さの約2割がほぼまっすぐなのに、
+  // 向きが約60°以上ちがう。端の小さな曲がりやジグザグのばね、なめらかな弓なり・アーチは対象にしない。端だけ曲げる「かぎ」は使える
+  { const n = dh.length, W = 4, LEG = Math.round(n*0.2);
+    for(let k=LEG; k+W+LEG<=n; k++){
+      const at = (k + W/2)/n; if(at < 0.2 || at > 0.8) continue;
+      let a = 0, b = 0, aAbs = 0, bAbs = 0, mid = 0;
+      for(let j=k-LEG;j<k;j++){ a += dh[j]; aAbs += Math.abs(dh[j]); }
+      for(let j=k+W;j<k+W+LEG;j++){ b += dh[j]; bAbs += Math.abs(dh[j]); }
+      for(let j=k;j<k+W;j++) mid += dh[j];
+      const turn = Math.abs(mid + a/2 + b/2);           // 前の脚の真ん中から後ろの脚の真ん中までに変わる向き
+      if(aAbs < 0.45 && bAbs < 0.45 && turn > 1.05){ analyzeStroke.reason = 'corner'; return null; }
+    } }
+  // 曲げすぎ（ほぼ輪）は竿にしない：ふくらみが両端の距離より大きい、または全体で約220°以上回っている
+  if(m > 1.0 || net > 3.8){ analyzeStroke.reason = 'curl'; return null; }
+  // 同じ向きに曲がるひとまとまり（0.35rad 以上）を数える＝波の数
+  let runs = 0, acc = 0, sign = 0;
+  dh.forEach(d=>{ const sgn = Math.sign(d); if(Math.abs(d)<0.01) return;
+    if(sgn===sign) acc += d; else { if(Math.abs(acc)>0.35) runs++; acc = d; sign = sgn; } });
+  if(Math.abs(acc)>0.35) runs++;
+  const cut = Math.floor(dh.length*0.28);
+  const sumA = a=>a.reduce((s,d)=>s+d,0), absA = a=>a.reduce((s,d)=>s+Math.abs(d),0);
+  const endHand = Math.abs(sumA(dh.slice(dh.length-cut))), endTip = Math.abs(sumA(dh.slice(0,cut)));
+  const endTurn = Math.max(endHand, endTip);
+  const bodyTurn = endHand >= endTip ? absA(dh.slice(0, dh.length-cut)) : absA(dh.slice(cut));
+  let form = 'straight';
+  if(runs >= 3 && m > 0.025) form = 'spring';
+  else if(endTurn > 1.0 && bodyTurn < 1.1) form = 'hook';
+  else if(m >= 0.06) form = 'bow';
+  return { L, c0, bend:m, side, turn, runs, endTurn, form, shape:off, pts:rs, handIdx, closed, shift };
+}
+
+function poleParams(item, st, opt){
+  opt = opt || {};
+  const b = st.bend, f = st.form;
+  let K = item.K, brk = item.brk, rigid = item.rigid;
+  if(opt.miracle){ K *= 5; brk = 0.4; }
+  let kk = K*Math.pow(4.5/st.c0, 2);
+  let v = Math.max(5, 8.9*(opt.speedMul||1) - 0.13*item.dens*st.L);
+  let bonus = 0, grip = 0, ret = 1;   // 手を離すときに上乗せする高さ（m）・持つ高さ（m）・ばねが返す力の割合
+  if(f==='straight'){ v *= 1.04; }
+  else if(f==='bow'){ kk *= 1 - Math.min(0.5, 1.5*b); rigid *= Math.max(0.1, 1-4*b); brk *= 1.15; }
+  else if(f==='spring'){ kk *= 0.55; brk = Math.max(brk*2.2, 0.5); rigid *= 0.3; bonus = 0.3 + 0.05*Math.min(6, st.runs); ret = 0.72; v *= 0.96; }
+  else if(f==='hook'){ grip = Math.min(0.5, 0.2*st.endTurn); v -= 0.5*Math.min(2.5, st.endTurn); }
+  return { Lr: st.c0, kk, rigid, brk, v:Math.max(4.5, v), bonus, grip, ret, form:f };
+}
+
+const BAR_X = 0.7; // ボックスの奥の端からバーまで（規則では 0.4〜0.8m）。支柱がマットの横に立つ位置
+const MAT_X0 = 0.55, MAT_X1 = 8.0, MAT_H = 0.8;
+function groundAt(x){ return (x>MAT_X0 && x<MAT_X1) ? MAT_H : 0; }
+// 竿の時間と飛んでいる時間をまとめてシミュレーション
+function simulate(item, st, opt){
+  opt = opt || {};
+  const P = poleParams(item, st, opt);
+  const Lr = P.Lr;
+  const H0 = Math.min(2.05, Lr*0.95);
+  const th0 = Math.acos(H0/Lr);
+  let r = Lr, th = th0;
+  // 踏み切り：横の速さ P.v と、上への踏み切り VJ
+  const VJ = 2.0;
+  let vr = (-P.v*Math.sin(th0) + VJ*Math.cos(th0))*(1-P.rigid);
+  let w = (-P.v*Math.cos(th0) - VJ*Math.sin(th0))/r;
+  const dt = 1/480, frames = [];
+  let t = 0, phase = 'pole', result = null, maxStrain = 0, compressed = false, back = false;
+  let x=0, y=0, vx=0, vy=0, kasaOpen = false, brokeAt = null;
+  const rec = () => frames.push({ t, phase, x, y, r, th, open:kasaOpen });
+  let step = 0;
+  while(t < 9){
+    if(phase === 'pole'){
+      const spring = r < Lr ? P.kk*(Lr-r)*(vr>0 ? P.ret : 1) : 0;
+      const ar = r*w*w + spring - G*Math.cos(th);
+      const aw = (G*Math.sin(th) - 2*vr*w)/r;
+      vr += ar*dt; w += aw*dt; r += vr*dt; th += w*dt;
+      if(r >= Lr && vr > 0){ r = Lr; vr = 0; }
+      if(r < Lr*0.995) compressed = true;
+      const strain = (Lr-r)/Lr; maxStrain = Math.max(maxStrain, strain);
+      x = -r*Math.sin(th); y = r*Math.cos(th);
+      const ex=-Math.sin(th), ey=Math.cos(th), tx=-Math.cos(th), ty=-Math.sin(th);
+      vx = vr*ex + r*w*tx; vy = vr*ey + r*w*ty;
+      if(strain > P.brk){ phase = 'fall'; brokeAt = t; result = 'break'; }
+      else if(th <= -0.04 || (th < 0.45 && compressed && r >= Lr*0.999 && vy > 0 && w < 0 && th < 0.2)){
+        phase = 'fly'; vy += 0.6; { const h = P.bonus + P.grip; if(h>0) vy = Math.sqrt(Math.max(0,vy)*Math.max(0,vy) + 2*G*h); }
+      } else if(w > 0 && th > 0.02){ back = true; phase = 'back'; }
+      else if(th > 0.02 && vy < 0 && y < Math.min(1.8, H0 - 0.15)){ back = true; phase = 'fall'; result = 'back'; } // 竿が縮んで後ろへ沈む：足が地面に届く前に手を離す
+    } else if(phase === 'back'){
+      const spring = r < Lr ? P.kk*(Lr-r)*(vr>0 ? P.ret : 1) : 0;
+      const ar = r*w*w + spring - G*Math.cos(th);
+      const aw = (G*Math.sin(th) - 2*vr*w)/r;
+      vr += ar*dt; w += aw*dt; r += vr*dt; th += w*dt;
+      if(r >= Lr && vr > 0){ r = Lr; vr = 0; }
+      x = -r*Math.sin(th); y = r*Math.cos(th);
+      const ex=-Math.sin(th), ey=Math.cos(th), tx=-Math.cos(th), ty=-Math.sin(th);
+      vx = vr*ex + r*w*tx; vy = vr*ey + r*w*ty;
+      if(y < 1.8){ phase = 'fall'; result = 'back'; } // 手が低くなって足が地面に届く前に竿から離れる
+    } else {
+      let g = G;
+      if(phase==='fly' && item.special==='kasa'){
+        if(!kasaOpen && vy < 0.2){ kasaOpen = true; vy += 2.0; }
+        if(kasaOpen){ g = G*0.35; vx *= (1-1.6*dt); if(vy < -2.2) vy = -2.2; }
+      }
+      // マットの手前で前へ進む速さをしぼる処理（見えない壁）は 11/6 に撤廃。勢いがあればマットの外まで飛ぶ
+      vy -= g*dt; x += vx*dt; y += vy*dt;
+      const gy = groundAt(x)+0.28; if(y <= gy && vy < 0){ y = gy; phase='land'; rec(); break; }
+    }
+    t += dt; step++;
+    if(step % 8 === 0) rec();
+  }
+  // 判定
+  const fly = frames.filter(f=>f.phase==='fly');
+  let peak = 0; frames.forEach(f=>{ if(f.y>peak) peak=f.y; });
+  let atBar = -1;
+  fly.forEach(f=>{ if(Math.abs(f.x-BAR_X) < 0.6 && f.y > atBar) atBar = f.y; });
+  if(!result){
+    if(fly.length===0) result = 'back';
+    else if(atBar < 0) result = fly[fly.length-1].x < BAR_X ? 'short' : 'over';
+    else result = 'fly';
+  }
+  return { P, th0, frames, result, peak, atBar, brokeAt, maxStrain };
+}
+
+// バーの高さに対する判定
+function judge(sim, bar){
+  if(sim.result==='break') return { ok:false, kind:'break' };
+  if(sim.result==='back') return { ok:false, kind:'back' };
+  if(sim.result==='short') return { ok:false, kind:'short' };
+  if(sim.result==='over') return { ok:false, kind:'over' };
+  if(sim.atBar >= bar + 0.05) return { ok:true, kind:'clear' };
+  if(sim.atBar >= bar - 0.45) return { ok:false, kind:'hit' };
+  return { ok:false, kind:'low' };
+}
+if(typeof module!=='undefined') module.exports = { orientStroke, ITEMS, analyzeStroke, simulate, judge, poleParams, groundAt };
+//!=='undefined') module.exports = { ITEMS, analyzeStroke, simulate, judge, poleParams };
+
+</script>
+<script>
+(()=>{
+const $ = id => document.getElementById(id);
+const CFG = { runT:3.8, deal:'deal', start:2.0, step:0.3, speed:1.0, mir:0.12, trail:true, stats:true, sound:true };
+try{ const v = localStorage.getItem('nandemo-vault-sound'); if(v==='off') CFG.sound=false; }catch(e){}
+
+// ===== 音 =====
+let AC = null;
+function ac(){ if(!AC){ try{ AC = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(AC && AC.state==='suspended') AC.resume(); return AC; }
+function tone(f, d, type='sine', vol=0.15, f2=null, when=0){
+  if(!CFG.sound) return; const a = ac(); if(!a) return;
+  const t = a.currentTime + when, o = a.createOscillator(), g = a.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, t); if(f2) o.frequency.exponentialRampToValueAtTime(f2, t+d);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t+d);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t+d+0.02);
+}
+let noiseBuf = null;
+function noise(d, vol=0.2, fq=1200, q=1, when=0){
+  if(!CFG.sound) return; const a = ac(); if(!a) return;
+  if(!noiseBuf){ noiseBuf = a.createBuffer(1, a.sampleRate, a.sampleRate); const ch = noiseBuf.getChannelData(0); for(let i=0;i<ch.length;i++) ch[i]=Math.random()*2-1; }
+  const t = a.currentTime+when, s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+  s.buffer = noiseBuf; f.type='bandpass'; f.frequency.value=fq; f.Q.value=q;
+  g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(0.0001,t+d);
+  s.connect(f).connect(g).connect(a.destination); s.start(t); s.stop(t+d+0.02);
+}
+const SFX = {
+  step: ()=> noise(0.05, 0.08, 500, 2),
+  plant: ()=> { tone(90, 0.18, 'sine', 0.3, 50); noise(0.08, 0.15, 300); },
+  release: ()=> noise(0.35, 0.12, 2200, 0.7),
+  clear: ()=> { [523,659,784,1047].forEach((f,i)=> tone(f, 0.25, 'triangle', 0.14, null, i*0.09)); },
+  fail: ()=> { tone(220, 0.35, 'triangle', 0.14, 140); },
+  snap: ()=> { noise(0.12, 0.35, 3000, 0.6); tone(900, 0.06, 'square', 0.06, 300); },
+  mat: ()=> noise(0.25, 0.25, 200, 0.8),
+  kasa: ()=> { noise(0.18, 0.2, 900, 1.2); tone(600, 0.15, 'sine', 0.06, 900); },
+  draw: ()=> tone(700+Math.random()*200, 0.03, 'sine', 0.03),
+  tick: ()=> tone(1200, 0.04, 'square', 0.04),
+};
+
+// ===== ものの絵 =====
+const POLE_W = { monosashi:0.10, sao:0.08, kasa:0.10, straw:0.09, take:0.09, tsuri:0.07, houki:0.07, hose:0.10, enpitsu:0.13, ami:0.06, magonote:0.06, tsuppari:0.08 };
+function drawItemStroke(ctx, pts, id, wpx, opt){
+  opt = opt||{};
+  if(pts.length < 2) return;
+  const cum=[0]; for(let i=1;i<pts.length;i++) cum.push(cum[i-1]+Math.hypot(pts[i].x-pts[i-1].x, pts[i].y-pts[i-1].y));
+  const tot = cum[cum.length-1]||1;
+  const at = u => { const s=u*tot; let i=1; while(i<cum.length-1 && cum[i]<s) i++; const t=(s-cum[i-1])/Math.max(1e-9,cum[i]-cum[i-1]);
+    return { x:pts[i-1].x+(pts[i].x-pts[i-1].x)*t, y:pts[i-1].y+(pts[i].y-pts[i-1].y)*t, a:Math.atan2(pts[i].y-pts[i-1].y, pts[i].x-pts[i-1].x) }; };
+  const seg = (a,b,color,w,cap='round')=>{ ctx.strokeStyle=color; ctx.lineWidth=w; ctx.lineCap=cap; ctx.lineJoin='round'; ctx.beginPath();
+    const p0 = at(a); ctx.moveTo(p0.x,p0.y);
+    for(let i=0;i<pts.length;i++){ const u=cum[i]/tot; if(u>a+1e-6 && u<b-1e-6) ctx.lineTo(pts[i].x,pts[i].y); }
+    const p1 = at(b); ctx.lineTo(p1.x,p1.y); ctx.stroke(); };
+  const outline = (w)=>{ seg(0,1,'#1D2433',w+Math.max(2,wpx*0.25)); };
+  if(id==='monosashi'){
+    // ものさし：黄色い板に目盛り（5つごとに長い目盛り）
+    outline(wpx);
+    seg(0,1,'#F0CF5E',wpx);
+    const step = Math.max(3, wpx*0.55), n = Math.floor(tot/step);
+    ctx.strokeStyle='#5C4A1E'; ctx.lineCap='butt';
+    for(let k=1;k<n;k++){ const p = at(k*step/tot), nx = -Math.sin(p.a), ny = Math.cos(p.a), L = (k%5===0 ? 0.55 : 0.28)*wpx;
+      ctx.lineWidth = Math.max(0.8, wpx*(k%5===0 ? 0.08 : 0.05));
+      ctx.beginPath(); ctx.moveTo(p.x+nx*wpx*0.5, p.y+ny*wpx*0.5); ctx.lineTo(p.x+nx*(wpx*0.5-L), p.y+ny*(wpx*0.5-L)); ctx.stroke(); }
+  } else if(id==='sao'){
+    outline(wpx);
+    seg(0,1,'#A9C2D3',wpx); seg(0,1,'#D7E5EE',wpx*0.3);
+    const n = Math.max(2, Math.floor(tot/(wpx*5)));
+    for(let k=1;k<n;k++){ const p=at(k/n); ctx.fillStyle='#6F8DA3'; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a); ctx.fillRect(-wpx*0.18,-wpx/2,wpx*0.36,wpx); ctx.restore(); }
+    seg(0,0.03,'#3C4A5C',wpx,'butt'); seg(0.97,1,'#3C4A5C',wpx,'butt');
+  } else if(id==='kasa'){
+    outline(wpx*0.45);
+    seg(0,1,'#B8BEC8',wpx*0.4);
+    // たたんだ布
+    ctx.fillStyle='#2D3E6B'; ctx.strokeStyle='#1D2433'; ctx.lineWidth=Math.max(1.5,wpx*0.15);
+    ctx.beginPath(); const N=16; const top=[],bot=[];
+    for(let k=0;k<=N;k++){ const u=0.08+0.62*k/N; const p=at(u); const half = wpx*(0.25+0.85*Math.sin(Math.PI*Math.min(1,(u-0.08)/0.62))*0.8);
+      top.push([p.x-Math.sin(p.a)*half, p.y+Math.cos(p.a)*half]); bot.push([p.x+Math.sin(p.a)*half, p.y-Math.cos(p.a)*half]); }
+    top.forEach((q,i)=> i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); bot.reverse().forEach(q=>ctx.lineTo(q[0],q[1])); ctx.closePath(); ctx.fill(); ctx.stroke();
+    // 持ち手
+    const e = at(1); ctx.strokeStyle='#7A4A2A'; ctx.lineWidth=wpx*0.55; ctx.lineCap='round';
+    ctx.beginPath(); ctx.arc(e.x+Math.cos(e.a)*wpx*0.1 - Math.sin(e.a)*wpx*0.7, e.y+Math.sin(e.a)*wpx*0.1+Math.cos(e.a)*wpx*0.7, wpx*0.7, e.a-Math.PI/2, e.a+Math.PI/2, false); ctx.stroke();
+  } else if(id==='take'){
+    outline(wpx);
+    seg(0,1,'#8DB04A',wpx); seg(0,1,'#B5CF73',wpx*0.3);
+    const n = Math.max(2, Math.floor(tot/(wpx*6)));
+    for(let k=1;k<n;k++){ const p=at(k/n); ctx.fillStyle='#5E7E2B'; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a); ctx.fillRect(-wpx*0.12,-wpx*0.62,wpx*0.24,wpx*1.24); ctx.restore(); }
+  } else if(id==='tsuri'){
+    // 先が細く、手元が太い。手元にコルクとリール
+    const N = 12;
+    for(let k=0;k<N;k++){ const a=k/N, b=(k+1)/N; const w = wpx*(0.3+0.9*b); seg(a,b,'#1D2433',w+Math.max(2,wpx*0.25),'round'); }
+    for(let k=0;k<N;k++){ const a=k/N, b=(k+1)/N; const w = wpx*(0.3+0.9*b); seg(a,b,'#3E4D6B',w,'round'); }
+    seg(0.8,1,'#C9A26B',wpx*1.25);
+    const r = at(0.74); ctx.fillStyle='#B8BEC8'; ctx.strokeStyle='#1D2433'; ctx.lineWidth=Math.max(1.5,wpx*0.15);
+    ctx.beginPath(); ctx.arc(r.x - Math.sin(r.a)*wpx*1.1, r.y + Math.cos(r.a)*wpx*1.1, wpx*0.75, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  } else if(id==='houki'){
+    const bf = Math.min(0.16, wpx*6/tot);
+    seg(bf*0.75,1,'#1D2433',wpx+Math.max(2,wpx*0.25));
+    seg(bf*0.75,1,'#B98552',wpx); seg(bf*0.75,1,'#D3A06A',wpx*0.3);
+    const p0 = at(0), p1 = at(bf);
+    ctx.fillStyle='#D9B65C'; ctx.strokeStyle='#1D2433'; ctx.lineWidth=Math.max(1.5,wpx*0.2);
+    const nx=-Math.sin(p0.a), ny=Math.cos(p0.a), hw=wpx*0.6, bw=wpx*2.4;
+    ctx.beginPath(); ctx.moveTo(p1.x+nx*hw,p1.y+ny*hw); ctx.lineTo(p0.x+nx*bw,p0.y+ny*bw); ctx.lineTo(p0.x-nx*bw,p0.y-ny*bw); ctx.lineTo(p1.x-nx*hw,p1.y-ny*hw); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle='#A8842F'; ctx.lineWidth=Math.max(1,wpx*0.1);
+    for(let k=-2;k<=2;k++){ const f=k/2.5; ctx.beginPath(); ctx.moveTo(p1.x+nx*hw*f,p1.y+ny*hw*f); ctx.lineTo(p0.x+nx*bw*f,p0.y+ny*bw*f); ctx.stroke(); }
+    ctx.strokeStyle='#C4553A'; ctx.lineWidth=wpx*0.5; ctx.beginPath(); ctx.moveTo(p1.x+nx*hw*1.2,p1.y+ny*hw*1.2); ctx.lineTo(p1.x-nx*hw*1.2,p1.y-ny*hw*1.2); ctx.stroke();
+  } else if(id==='hose'){
+    outline(wpx);
+    seg(0,1,'#3FA36B',wpx); seg(0,1,'#7CCB98',wpx*0.25);
+    const e = at(1); ctx.fillStyle='#F2C230'; ctx.strokeStyle='#1D2433'; ctx.lineWidth=Math.max(1.5,wpx*0.15);
+    ctx.save(); ctx.translate(e.x,e.y); ctx.rotate(e.a); ctx.beginPath(); ctx.rect(0,-wpx*0.55,wpx*1.4,wpx*1.1); ctx.fill(); ctx.stroke(); ctx.restore();
+  } else if(id==='enpitsu'){
+    // えんぴつ：描き始めの端が、削った先と芯。反対の端に金具と消しゴム
+    const cf = Math.min(0.18, wpx*2.2/tot), ef = Math.min(0.12, wpx*1.6/tot);
+    seg(cf,1,'#1D2433',wpx+Math.max(2,wpx*0.25),'butt');
+    seg(cf,1-ef,'#F2C230',wpx,'butt'); seg(cf,1-ef,'#D9A514',wpx*0.22,'butt');
+    seg(1-ef,1-ef*0.45,'#B8BEC8',wpx,'butt'); seg(1-ef*0.45,1,'#F29C9C',wpx,'round');
+    const p0 = at(0), p1 = at(cf), nx = -Math.sin(p1.a), ny = Math.cos(p1.a), hw = wpx*0.5;
+    ctx.fillStyle='#EBC99A'; ctx.strokeStyle='#1D2433'; ctx.lineWidth=Math.max(1.5,wpx*0.15);
+    ctx.beginPath(); ctx.moveTo(p1.x+nx*hw,p1.y+ny*hw); ctx.lineTo(p0.x,p0.y); ctx.lineTo(p1.x-nx*hw,p1.y-ny*hw); ctx.closePath(); ctx.fill(); ctx.stroke();
+    const pm = at(cf*0.38); ctx.fillStyle='#2B2F38';
+    ctx.beginPath(); ctx.moveTo(pm.x+nx*hw*0.38,pm.y+ny*hw*0.38); ctx.lineTo(p0.x,p0.y); ctx.lineTo(pm.x-nx*hw*0.38,pm.y-ny*hw*0.38); ctx.closePath(); ctx.fill();
+  } else if(id==='ami'){
+    // 虫取り網：緑の細い柄。描き終わりの端に輪と網の袋
+    const rf = Math.min(0.3, wpx*7/tot), u0 = 1 - rf;
+    seg(0,u0,'#1D2433',wpx+Math.max(2,wpx*0.25)); seg(0,u0,'#5FA052',wpx); seg(0,u0,'#8CC57C',wpx*0.3);
+    seg(0,Math.min(0.12, wpx*4/tot),'#F2EFDF',wpx*1.05);            // 手元のグリップ
+    const p0 = at(u0), e = at(1), cx = (p0.x+e.x)/2, cy = (p0.y+e.y)/2, ang = Math.atan2(e.y-p0.y, e.x-p0.x);
+    const R = Math.max(wpx*2.4, Math.hypot(e.x-p0.x, e.y-p0.y)/2), nx = -Math.sin(ang), ny = Math.cos(ang);
+    // 網の袋（輪から片側へたれる）
+    ctx.fillStyle='rgba(251,248,241,0.85)'; ctx.strokeStyle='#9AA3AE'; ctx.lineWidth=Math.max(1,wpx*0.12);
+    ctx.beginPath(); ctx.moveTo(p0.x,p0.y); ctx.quadraticCurveTo(cx+nx*R*2.4, cy+ny*R*2.4, e.x, e.y); ctx.closePath(); ctx.fill(); ctx.stroke();
+    for(let k=1;k<4;k++){ const f=k/4; ctx.beginPath(); ctx.moveTo(p0.x+(e.x-p0.x)*f, p0.y+(e.y-p0.y)*f); ctx.lineTo(cx+nx*R*1.25+(e.x-p0.x)*(f-0.5)*0.4, cy+ny*R*1.25+(e.y-p0.y)*(f-0.5)*0.4); ctx.stroke(); }
+    // 輪
+    ctx.strokeStyle='#1D2433'; ctx.lineWidth=Math.max(2,wpx*0.55); ctx.beginPath(); ctx.ellipse(cx,cy,R,R*0.32,ang,0,Math.PI*2); ctx.stroke();
+    ctx.strokeStyle='#B8BEC8'; ctx.lineWidth=Math.max(1.2,wpx*0.3); ctx.beginPath(); ctx.ellipse(cx,cy,R,R*0.32,ang,0,Math.PI*2); ctx.stroke();
+  } else if(id==='magonote'){
+    outline(wpx);
+    seg(0,1,'#D8B878',wpx); seg(0,1,'#EBD3A0',wpx*0.3);
+    // 先（手元の反対）に小さな手
+    const e = at(1); ctx.save(); ctx.translate(e.x,e.y); ctx.rotate(e.a);
+    ctx.fillStyle='#D8B878'; ctx.strokeStyle='#1D2433'; ctx.lineWidth=Math.max(1.5,wpx*0.25);
+    ctx.beginPath(); ctx.moveTo(-wpx*0.4,-wpx*0.6); ctx.quadraticCurveTo(wpx*1.6,-wpx*1.4,wpx*2.2,wpx*0.6); ctx.quadraticCurveTo(wpx*1.2,wpx*1.4,-wpx*0.4,wpx*0.6); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle='#A88A4E'; ctx.lineWidth=Math.max(1,wpx*0.15);
+    for(let k=0;k<3;k++){ ctx.beginPath(); ctx.moveTo(wpx*(1.2+k*0.3),-wpx*(0.4-k*0.4)); ctx.lineTo(wpx*(1.9+k*0.1),wpx*(-0.1+k*0.35)); ctx.stroke(); }
+    ctx.restore();
+  } else if(id==='tsuppari'){
+    outline(wpx*1.1);
+    seg(0,0.55,'#E9EDF1',wpx*1.1); seg(0.5,1,'#C9D1DA',wpx*0.8);
+    seg(0,0.55,'#FFFFFF',wpx*0.3);
+    const m = at(0.52); ctx.fillStyle='#8A97AB'; ctx.save(); ctx.translate(m.x,m.y); ctx.rotate(m.a); ctx.fillRect(-wpx*0.3,-wpx*0.65,wpx*0.6,wpx*1.3); ctx.restore();
+    seg(0,0.025,'#F2C230',wpx*1.3,'butt'); seg(0.975,1,'#F2C230',wpx*1.3,'butt');
+  } else if(id==='straw'){
+    // ストロー：白。描き終わりの端の近くに、曲がる蛇腹
+    outline(wpx);
+    seg(0,1,'#FBFBF7',wpx);
+    const bf = Math.min(0.12, wpx*3/tot), b1 = 0.86 - bf, b2 = 0.86;
+    ctx.strokeStyle='#9AA3AE'; ctx.lineWidth=Math.max(0.8, wpx*0.12);
+    const m = Math.max(3, Math.round((b2-b1)*tot/(wpx*0.35)));
+    for(let k=0;k<=m;k++){ const p = at(b1 + (b2-b1)*k/m); ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a);
+      ctx.beginPath(); ctx.moveTo(0,-wpx*0.5); ctx.lineTo(0,wpx*0.5); ctx.stroke(); ctx.restore(); }
+
+  }
+}
+// 開いた傘。len：柄の長さ（px、描いた傘の長さ）、w：竿の太さ（px）、k：開き具合（0=たたんだまま、1=開ききる）
+function drawOpenKasa(ctx, x, y, len, ang, k, w){
+  k = k==null ? 1 : k; w = w || len*0.03;
+  ctx.save(); ctx.translate(x,y); ctx.rotate(ang);
+  ctx.lineCap='round';
+  ctx.strokeStyle='#1D2433'; ctx.lineWidth=w*0.45+2; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,-len); ctx.stroke();
+  ctx.strokeStyle='#B8BEC8'; ctx.lineWidth=w*0.4; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,-len); ctx.stroke();
+  // たたんだ布（柄の上側 0.30〜0.92）から、開いた布へ
+  const rimY = -len*(0.30 + 0.38*k), apexY = -len*(0.92 + 0.12*k);
+  const half = Math.max(w*0.7, len*0.62*k);
+  ctx.fillStyle='#2D3E6B'; ctx.strokeStyle='#1D2433'; ctx.lineWidth=Math.max(1.5, w*0.15);
+  ctx.beginPath(); ctx.moveTo(-half, rimY);
+  const n = 4; for(let j=0;j<n;j++){ const x0 = -half + j*2*half/n; ctx.quadraticCurveTo(x0 + half/n, rimY + len*0.06*k, x0 + 2*half/n, rimY); }
+  ctx.quadraticCurveTo(half*0.95, apexY*0.98, 0, apexY); ctx.quadraticCurveTo(-half*0.95, apexY*0.98, -half, rimY);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  // 持ち手
+  ctx.strokeStyle='#7A4A2A'; ctx.lineWidth=w*0.55; ctx.beginPath(); ctx.arc(w*0.7, 0, w*0.7, Math.PI, 0, true); ctx.stroke();
+  ctx.restore();
+}
+function iconCanvas(id, size){
+  size = size || 48;
+  const work = document.createElement('canvas'); work.width = 200; work.height = 200;
+  const w = work.getContext('2d');
+  const pts=[]; for(let i=0;i<=24;i++){ const u=i/24; pts.push({x:40+120*u, y:160-120*u + Math.sin(Math.PI*u)*(id==='sao'||id==='tsuppari'?0:10)}); }
+  drawItemStroke(w, pts, id, (POLE_W[id]||0.1)*150);
+  const im = w.getImageData(0,0,200,200).data; let x0=200,y0=200,x1=0,y1=0;
+  for(let y=0;y<200;y++) for(let x=0;x<200;x++){ if(im[(y*200+x)*4+3]>10){ if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y; } }
+  const d = 2, c = document.createElement('canvas'); c.width = size*d; c.height = size*d;
+  const x = c.getContext('2d'); const pad = 3*d, bw = Math.max(1,x1-x0), bh = Math.max(1,y1-y0);
+  const k = Math.min((c.width-pad*2)/bw, (c.height-pad*2)/bh);
+  x.drawImage(work, x0, y0, bw, bh, (c.width-bw*k)/2, (c.height-bh*k)/2, bw*k, bh*k);
+  return c;
+}
+
+// ===== 描くパッド =====
+const pad = $('pad'), pctx = pad.getContext('2d');
+const PAD_W_M = 7; let PAD_H_M = 2.6;
+let stroke = [], analysis = null, drawing = false, curItem = 'monosashi';
+function padSize(){ const r = pad.getBoundingClientRect(); const d = Math.min(2, window.devicePixelRatio||1); pad.width = Math.max(1,Math.round(r.width*d)); pad.height = Math.max(1,Math.round(r.height*d)); return {w:r.width||1,h:r.height||1,d}; }
+let PS = {w:1,h:1,d:1,m:1};
+function drawPad(){
+  PS = padSize(); const {w,h,d} = PS; const ctx = pctx; ctx.setTransform(d,0,0,d,0,0);
+  const m = w/PAD_W_M; PS.m = m; PAD_H_M = h/m;
+  ctx.fillStyle='#F1ECE0'; ctx.fillRect(0,0,w,h);
+  { const M = PAD_MARGIN*w/PAD_W_M; ctx.fillStyle='#FFFDF8'; ctx.fillRect(M,M,w-2*M,h-2*M); }
+  ctx.strokeStyle='#EDE6D6'; ctx.lineWidth=1;
+  for(let i=1;i<PAD_W_M;i++){ ctx.beginPath(); ctx.moveTo(i*m,0); ctx.lineTo(i*m,h); ctx.stroke(); }
+  for(let j=1;j<PAD_H_M;j++){ ctx.beginPath(); ctx.moveTo(0,h-j*m); ctx.lineTo(w,h-j*m); ctx.stroke(); }
+  ctx.fillStyle='#9B927F'; ctx.font=`600 ${Math.max(10,m*0.17)}px 'Barlow Condensed',sans-serif`; ctx.textBaseline='bottom';
+  for(let i=1;i<=PAD_W_M;i++) ctx.fillText(i+'m', i*m-ctx.measureText(i+'m').width-3, h-3);
+  ctx.textBaseline='top';
+  for(let j=1;j<PAD_H_M-0.3;j++) ctx.fillText(j+'m', 4, h-j*m+3);
+  // 背丈の目安（1.7m の人）
+  const px = m*0.42, ph = 1.7*m; ctx.strokeStyle='#CFC6B2'; ctx.lineWidth=Math.max(2,m*0.05); ctx.lineCap='round';
+  ctx.beginPath(); ctx.arc(px, h-ph+m*0.12, m*0.12, 0, Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(px,h-ph+m*0.25); ctx.lineTo(px,h-m*0.85); ctx.lineTo(px-m*0.12,h-2); ctx.moveTo(px,h-m*0.85); ctx.lineTo(px+m*0.12,h-2);
+  ctx.moveTo(px-m*0.16,h-ph+m*0.6); ctx.lineTo(px,h-ph+m*0.4); ctx.lineTo(px+m*0.16,h-ph+m*0.6); ctx.stroke();
+  if(stroke.length<2){
+    ctx.fillStyle='#B3AA96'; ctx.font=`600 ${Math.max(14,Math.min(20,w*0.035))}px 'M PLUS 2',sans-serif`; ctx.textBaseline='middle'; ctx.textAlign='center';
+    ctx.fillText('ここに指で、竿を1本描く', w/2+m*0.3, h/2-12);
+    ctx.font=`600 ${Math.max(11,Math.min(14,w*0.028))}px 'M PLUS 2',sans-serif`; ctx.fillText('まっすぐ・弓なり・ジグザグ・端を曲げる', w/2+m*0.3, h/2+14); ctx.textAlign='left';
+  } else {
+    let pts = stroke.map(p=>({x:p.x*m, y:h-p.y*m}));
+    if(padRev) pts = pts.slice().reverse();
+    drawItemStroke(ctx, pts, curItem, Math.max(7, POLE_W[curItem]*m));
+  }
+}
+let padRev = false; // パッドの絵を、いまの線の並びと逆に描くか（描き始めた端を根・穂の側にそろえるため）
+const PAD_MARGIN = 0.25; // m。枠ぎわは描けない（竿の太さが枠の外に隠れないように）
+function padPoint(e){ const r = pad.getBoundingClientRect(); const m = r.width/PAD_W_M, M = PAD_MARGIN;
+  return { x:Math.min(PAD_W_M-M,Math.max(M,(e.clientX-r.left)/m)), y:Math.min(r.height/m-M,Math.max(M,(r.bottom-e.clientY)/m)) }; }
+let lastSfx = 0;
+// 1本の指でだけ描ける。描いている途中で2本目の指が触れたら、その線は取り消し、指が全部離れるまで描かない
+const touching = new Set(); let activeId = null, blocked = false, multiNote = false;
+pad.addEventListener('pointerdown', e=>{ e.preventDefault(); touching.add(e.pointerId);
+  if(touching.size > 1){ if(drawing){ drawing = false; stroke = []; } activeId = null; blocked = true; multiNote = true; updateStroke(); return; }
+  if(blocked) return;
+  ac(); try{ pad.setPointerCapture(e.pointerId); }catch(err){} activeId = e.pointerId; multiNote = false;
+  drawing = true; stroke=[padPoint(e)]; strokeL = 0; capped = false; padRev = false; updateStroke(); });
+// 12m に達したら、それ以上は線が伸びない（指を動かしても止まったまま）
+let strokeL = 0, capped = false;
+pad.addEventListener('pointermove', e=>{ if(!drawing || capped || e.pointerId !== activeId) return; let p = padPoint(e); const q = stroke[stroke.length-1];
+  const d = Math.hypot(p.x-q.x,p.y-q.y);
+  if(d*PS.m > 3){
+    if(strokeL + d >= MAX_POLE_L){ const k = Math.max(0, MAX_POLE_L - 1e-3 - strokeL)/d; p = { x:q.x+(p.x-q.x)*k, y:q.y+(p.y-q.y)*k }; capped = true; SFX.tick(); }
+    stroke.push(p); strokeL += Math.hypot(p.x-q.x,p.y-q.y);
+    if(!capped && performance.now()-lastSfx>60){ SFX.draw(); lastSfx=performance.now(); } updateStroke(); } });
+const endDraw = ()=>{ if(!drawing) return; drawing=false; const o = orientStroke(stroke); if(o !== stroke){ stroke = o; padRev = !padRev; } updateStroke(); };
+const liftFinger = e=>{ touching.delete(e.pointerId); if(e.pointerId === activeId){ activeId = null; endDraw(); } if(touching.size === 0) blocked = false; };
+pad.addEventListener('pointerup', liftFinger); pad.addEventListener('pointercancel', liftFinger);
+function updateStroke(){
+  analysis = stroke.length>2 ? analyzeStroke(stroke) : null;
+  $('bJump').disabled = !analysis || drawing;
+  $('stats').textContent = (CFG.stats && stroke.length > 1) ? `長さ ${strokeL.toFixed(1)}m` : ''; // 竿にできない形でも、長さは出しておく
+  // 竿にできないときの理由は、見出しではなく下の決まった高さの行に出す
+  const why = (multiNote && !stroke.length) ? '1本の指で描いてください' : (capped && drawing) ? '長すぎます。12mまでです' : (analysis || !stroke.length || drawing) ? '' :
+    analyzeStroke.reason==='closed' ? '輪にせず、両端を離して描いてください' :
+    analyzeStroke.reason==='curl' ? '曲げすぎです。両端をもっと離して描いてください' :
+    analyzeStroke.reason==='corner' ? '角のある形は使えません。なめらかに描いてください' :
+    analyzeStroke.reason==='long' ? '長すぎます。12mまでで描いてください' : 'もう少し長く描いてください';
+  const fc = $('formChip');
+  // 文の途中で折り返さず、「。」のあとで改行されるように1文ずつ包む
+  const sen = t => t.split(/(?<=。)/).map(x=>`<span class="sen">${x}</span>`).join('');
+  fc.hidden = !CFG.stats && !why;
+  fc.classList.remove('warn');
+  if(why){ fc.innerHTML = sen(why); fc.classList.add('empty','warn'); }
+  else if(analysis && !drawing){ const F = FORMS[analysis.form]; fc.innerHTML = `<b>${F.name}</b><span class="desc">${sen(F.desc)}</span>`; fc.classList.remove('empty'); }
+  else { fc.textContent = '描き終わると、形と効き方がここに出ます'; fc.classList.add('empty'); }
+  drawPad();
+}
+$('bClear').onclick = ()=>{ stroke=[]; multiNote = false; capped = false; strokeL = 0; updateStroke(); };
+
+// ===== 試合の進み =====
+const G_ = { bar:2, tryNo:1, log:[], best:null, deck:[], last:null, offer:[] };
+const fmt = h => { const m=Math.floor(h+1e-6), c=Math.round((h-m)*100); return `${m}m${String(c).padStart(2,'0')}`; };
+function nextFromDeck(){
+  if(!G_.deck.length){ const d = ITEM_IDS.slice(); for(let i=d.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [d[i],d[j]]=[d[j],d[i]]; }
+    if(d[d.length-1]===G_.last && d.length>1) [d[0],d[d.length-1]]=[d[d.length-1],d[0]]; G_.deck=d; }
+  return G_.deck.pop();
+}
+function newGame(){ G_.bar=CFG.start; G_.tryNo=1; G_.log=[]; G_.best=null; G_.deck=[]; G_.last=null; }
+function dealOffer(){
+  if(CFG.deal==='deal'){ G_.offer=[nextFromDeck()]; }
+  else if(CFG.deal==='two'){ const a=nextFromDeck(); let b=nextFromDeck(); if(b===a) b=nextFromDeck(); G_.offer=[a,b]; }
+  else G_.offer = ITEM_IDS.slice();
+  curItem = G_.offer[0];
+}
+function renderCards(){
+  const box = $('cards'); box.innerHTML=''; box.classList.toggle('many', G_.offer.length>2); box.classList.toggle('two', G_.offer.length===2);
+  G_.offer.forEach(id=>{
+    const it = ITEMS[id]; const el = document.createElement(G_.offer.length>1?'button':'div');
+    el.className = 'icard' + (G_.offer.length>1?' pick':'') + (id===curItem && G_.offer.length>1 ? ' sel':'');
+    el.appendChild(iconCanvas(id, G_.offer.length>2 ? 34 : 48));
+    const t = document.createElement('div'); t.style.minWidth='0';
+    t.innerHTML = `<div class="ey">${G_.offer.length>1?'えらぶ':'今回の竿'}</div><div class="nm">${it.name}</div><div class="ht">${it.hint}</div>`;
+    el.appendChild(t);
+    if(G_.offer.length>1) el.onclick = ()=>{ curItem=id; SFX.tick(); renderCards(); updateStroke(); };
+    box.appendChild(el);
+  });
+  $('padItem').textContent = ITEMS[curItem].name;
+}
+function show(id){ ['title','draw','hud','end'].forEach(s=> $(s).hidden = s!==id); $('res').hidden = true; $('snd').hidden = id!=='title'; }
+function toDraw(){
+  dealOffer(); show('draw');
+  $('dBar').textContent = fmt(G_.bar);
+  $('dTryLbl').textContent = `${G_.tryNo}回目`;
+  $('dTries').innerHTML = [1,2,3].map(i=> `<i class="${i<G_.tryNo?'x':i===G_.tryNo?'now':''}"></i>`).join('');
+  stroke=[]; renderCards();
+  requestAnimationFrame(()=>updateStroke());
+  scene.mode='draw'; scene.anim=null; scene.camX=null;
+}
+
+// ===== 競技場の絵 =====
+const cv = $('scene'), ctx = cv.getContext('2d');
+const scene = { mode:'title', anim:null, camX:null, camY:0, scale:60 };
+let VW=1, VH=1, DPR=1;
+function resize(){ DPR=Math.min(2,window.devicePixelRatio||1); VW=innerWidth; VH=innerHeight; cv.width=Math.round(VW*DPR); cv.height=Math.round(VH*DPR); if(!$('draw').hidden) updateStroke(); }
+addEventListener('resize', resize);
+
+function makeAnim(itemId, st, bar, opt){
+  const sim = simulate(ITEMS[itemId], st, { speedMul:CFG.speed, miracle:opt.miracle });
+  const jd = judge(sim, bar);
+  const P = sim.P, Lr = P.Lr, H0 = Math.min(2.05, Lr*0.95);
+  const xp = -Math.sqrt(Math.max(0, Lr*Lr-H0*H0));
+  const fit = fitPoleShape(st, sim, xp, H0);
+  const carry = carryPose(st);
+  const A0 = { fit, carry, itemId, st, sim, jd, bar, xp, H0, T:(CFG.runT||3.8), t:0, events:{}, trail:[], peak:0, miracle:opt.miracle, done:false, barFall:0, demo:!!opt.demo };
+  A0.jd = judgeBody(A0, jd);
+  return A0;
+}
+
+function vaulterAt(A){
+  // 体の位置（手の位置）と、体の向き β（0=足が下、π=逆さ）
+  const t = A.t, P = A.sim.P;
+  if(t < A.T){
+    const x = A.xp - P.v*(A.T - t), y = 1.25 + (A.H0-1.25)*Math.max(0,(t-(A.T-0.25))/0.25);
+    return { x, y, beta:0, run:true, phase:'run' };
+  }
+  const fr = A.sim.frames; const i = Math.min(fr.length-1, Math.floor((t-A.T)*60));
+  const f = fr[i];
+  const hangs = A.itemId==='kasa' && f.open && A.sim.result!=='break';
+  if(f.phase !== 'pole' && f.phase !== 'back' && !hangs){
+    // 体が目に見えてマット（地面）についた瞬間から、頭を支点に脚と体が重さで落ちる
+    if(A.touchI == null){
+      A.touchI = fr.length-1;
+      for(let j=1;j<fr.length;j++){ const q = fr[j]; if(q.phase==='pole'||q.phase==='back') continue;
+        if(fr[j-1].y > q.y && basePose(A, j).lifted){ A.touchI = j; break; } }
+    }
+    if(i >= A.touchI){
+      const B = basePose(A, A.touchI);
+      if(A.settle == null) A.settle = findSettle(B.x, B.y, B.beta, B.mir);
+      const S = A.settle;
+      const ts = Math.max(0, (t - A.T) - A.touchI/60);
+      const at = u => { const p = Math.min(1, u/0.2), e = Math.pow(p, 1.6);   // 重さで、すぐ・だんだん速く倒れる
+        const b2 = B.beta + S.d*e, R = bodyRel(b2, B.mir, 0);
+        // マットの端にかかったときの、乗り上げ・ずり落ち（横は勢いのまま、縦は重さで）
+        const pm = Math.min(1, u/0.3), ex = 1 - Math.pow(1 - pm, 2), ey = pm*pm;
+        const sx = S.px - R[S.pj].x + S.sx*ex; let sy = S.py - R[S.pj].y + S.sy*ey;
+        let mn = Infinity; for(const k in R) mn = Math.min(mn, sy + R[k].y - groundAt(sx + R[k].x)); if(mn < 0.04) sy += 0.04 - mn; // 倒れる途中も地面・マットにめりこまない
+        return { x:sx, y:sy, b2 }; };
+      const now = at(ts);
+      // 支えが急になくなっても（マットの端から外れたときなど）、自由落下より速くは下がらない
+      let y = now.y; for(let k=1; k<=40 && k/60<=ts; k++){ const q = at(ts - k/60); y = Math.max(y, q.y - 0.5*9.8*(k/60)*(k/60)); }
+      return { x: now.x, y, beta:now.b2, mir:B.mir, tuck:0, run:false, phase:f.phase, f, i };
+    }
+  }
+  return basePose(A, i);
+}
+// めりこみの押し出し。mode：'top'（マットの上に乗る）／'left'（マットの手前の側面で押し返す）／'right'（奥の側面）／null（地面だけ）
+function resolveBody(x, y, R, mode){
+  let mn = Infinity; for(const k in R) mn = Math.min(mn, R[k].y);
+  y = Math.max(y, 0.04 - mn);
+  if(mode === 'top'){ let need = -Infinity; for(const k in R){ const jx = x + R[k].x; if(jx > MAT_X0 && jx < MAT_X1) need = Math.max(need, MAT_H + 0.04 - R[k].y); } if(need > y) y = need; }
+  else if(mode === 'left' || mode === 'right'){ let d = 0;
+    for(const k in R){ const jx = x + R[k].x, jy = y + R[k].y; if(jy >= MAT_H + 0.02 || jx <= MAT_X0 - 0.03 || jx >= MAT_X1 + 0.03) continue;
+      if(mode === 'left') d = Math.min(d, MAT_X0 - 0.03 - jx); else d = Math.max(d, MAT_X1 + 0.03 - jx); }
+    x += d; }
+  return { x, y };
+}
+// 最初にマットに触れる瞬間を探して、上・手前・奥のどれで触れるかを決める
+function contactMode(A){
+  const fr = A.sim.frames;
+  for(let j=0;j<fr.length;j++){ if(fr[j].phase==='pole'||fr[j].phase==='back') continue;
+    const P = basePose(A, j, true), R = bodyRel(P.beta, P.mir, 0);
+    let up = 0, l = 0, rr = 0, hit = false;
+    for(const k in R){ const jx = P.x + R[k].x, jy = P.y + R[k].y; if(jx <= MAT_X0 || jx >= MAT_X1 || jy >= MAT_H + 0.04) continue;
+      hit = true; up = Math.max(up, MAT_H + 0.04 - jy); l = Math.max(l, jx - (MAT_X0 - 0.03)); rr = Math.max(rr, MAT_X1 + 0.03 - jx); }
+    if(hit) return up <= l && up <= rr ? 'top' : (l <= rr ? 'left' : 'right');
+  }
+  return 'top';
+}
+// i 番目の瞬間の、ふつうの姿勢（着地で脚が落ちる前）
+function basePose(A, i, raw){
+  const fr = A.sim.frames, f = fr[i];
+  const th0 = A.sim.th0;
+  let beta, mir = 1;
+  if(f.phase==='pole'||f.phase==='back') beta = Math.PI*0.95*Math.min(1,Math.max(0,1 - f.th/th0));
+  else {
+    const rel = fr.findIndex(q=>q.phase!=='pole'&&q.phase!=='back');
+    const dt = Math.max(0,(i-rel)/60);
+    const b0 = rel>0 ? Math.PI*0.95*Math.min(1,Math.max(0,1 - fr[rel-1].th/th0)) : 0.3;
+    if(A.sim.result==='break') beta = b0 + dt*2.0;
+    else if(A.sim.result==='back') beta = b0*Math.max(0, 1 - dt/0.3);   // 戻されたら、ぶら下がった向きのまま足から降りる
+    else {
+      // バーを越えるまでは逆立ちに近い姿勢（体が手より上）、越えてから体を寝かせる
+      if(A.passI == null){ A.passI = fr.findIndex((q,j)=> j>=rel && q.x >= BAR_X + 0.45); if(A.passI < 0) A.passI = fr.length; }
+      const toTop = b0 + (Math.PI - b0)*Math.min(1, dt/0.25);
+      const after = Math.max(0, (i - A.passI)/60);
+      beta = i < A.passI ? toTop : Math.PI - (Math.PI*0.45)*Math.min(1, after/0.4); // 脚を前（マット側）へ送って倒れる
+      // 竿を離した瞬間の向きから、なめらかにつなぐ（離すのがバーを越えたあとでも、1コマで向きが飛ばないように）
+      if(dt < 0.2){ const w = dt/0.2, sm = w*w*(3-2*w); beta = b0 + (beta - b0)*sm; }
+    }
+    if(A.itemId==='kasa' && f.open){
+      // 傘が開いたら、傘にぶら下がる向きへ（開いた瞬間から0.3秒かけてつなぐ）
+      if(A.openI == null){ A.openI = fr.findIndex(q=>q.open); }
+      const w = Math.min(1, Math.max(0, (i - A.openI)/18)), sm = w*w*(3-2*w);
+      beta = beta + (Math.max(0, b0 - dt*2.5) - beta)*sm; mir = 1; }
+  }
+  let x = f.x, y = f.y, lifted = false;
+  if(f.phase!=='pole' && f.phase!=='back'){
+    if(A.sim.result!=='back' && !(A.itemId==='kasa' && f.open && A.sim.result!=='break') && (f.phase==='land' || f.phase==='fall' || (f.phase==='fly' && i>0 && fr[i-1].y > f.y))){
+      // 落ちてくるあいだに、体を横向き（あおむけ）にそろえる
+      const land = fr.length-1, left = Math.max(0, (land - i)/60);
+      // 寝かせる向き（あおむけ／うつぶせ）は、着地の瞬間の姿勢で1回だけ決める（途中で入れかわって一瞬くるっと回らないように）
+      if(A.lieT == null){ const rel = fr.findIndex(q=>q.phase!=='pole'&&q.phase!=='back'); const b0 = rel>0 ? Math.PI*0.95*Math.min(1,Math.max(0,1 - fr[rel-1].th/th0)) : 0.3;
+        A.lieT = (A.sim.result==='break' && b0 + Math.max(0,(land-rel)/60)*2.0 >= Math.PI) ? Math.PI*1.5 : Math.PI*0.5; }
+      const relI = fr.findIndex(q=>q.phase!=='pole'&&q.phase!=='back'), since = Math.min(1, Math.max(0, (i - relI)/60/0.25)), ramp = since*since*(3-2*since);
+      const target = A.lieT; const k = Math.min(1, Math.max(0, 1 - left/0.45))*ramp;   // 竿を離した直後から急に回らない
+      beta = beta + (target - beta)*k;
+    }
+    // 地面とマットにめりこまないように体を押し出す。マットに上から触れたら上に乗せ、横から触れたら側面で押し返す。
+    // どちらで触れるかは、最初に触れた瞬間に「押し出す量が小さいほう」で決め、その回のあいだは変えない（急に位置が飛ばないように）
+    const R = bodyRel(beta, mir, 0);
+    if(raw !== true){ if(A.cmode === undefined) A.cmode = contactMode(A); }
+    const r = resolveBody(x, y, R, raw === true ? null : A.cmode);
+    if(r.x !== x || r.y !== y) lifted = true;
+    x = r.x; y = r.y;
+  }
+  const tuck = (f.phase==='pole'||f.phase==='back') ? Math.max(0, Math.sin(beta)) : 0;
+  return { x, y, beta, mir, tuck, lifted, run:false, phase:f.phase, f, i };
+}
+
+function W2S(x,y){ return [ VW/2 + (x - scene.camX)*scene.scale, scene.groundY - y*scene.scale ]; }
+// 奥行き。カメラは真横より少し手前の上にあり、奥（z>0）にあるものほど右上に見える。走る人・竿・バーの当たりは z=0 の面
+let VIEW = 'oblique'; const DZX = 0.13, DZY = 0.1;
+function W2Sz(x,y,z){ return VIEW==='oblique' ? W2S(x + z*DZX, y + z*DZY) : W2S(x,y); }
+
+function drawBackground(){
+  const s = scene.scale;
+  const g = ctx.createLinearGradient(0,0,0,scene.groundY); g.addColorStop(0,'#A9CCE0'); g.addColorStop(1,'#EAF2F2');
+  ctx.fillStyle=g; ctx.fillRect(0,0,VW,VH);
+  // スタンド（遠く、ゆっくり流れる）
+  const par = 0.35, sx = -scene.camX*s*par;
+  const standTop = scene.groundY - 3.4*s*0.9;
+  ctx.fillStyle='#8BA4B5'; ctx.fillRect(0, standTop, VW, scene.groundY-standTop);
+  ctx.fillStyle='#7690A3';
+  for(let r=0;r<5;r++){ const y = standTop + r*(scene.groundY-standTop)/5; ctx.fillRect(0,y,VW,Math.max(1,s*0.05)); }
+  // 観客の点
+  const cell = Math.max(6, s*0.28);
+  for(let r=0;r<5;r++){ const y = standTop + (r+0.5)*(scene.groundY-standTop)/5;
+    for(let k=-1;k<VW/cell+1;k++){ const wx = k + Math.floor(-sx/cell); const xx = ((wx*cell + sx) % (VW+cell*2)); const h = (Math.sin(wx*12.9898+r*78.233)*43758.5453)%1;
+      if(Math.abs(h)<0.55){ ctx.fillStyle = ['#C9D6DE','#E6CFA8','#B7C9A8','#D9B3A8'][Math.abs(Math.floor(h*40))%4]; ctx.beginPath(); ctx.arc(wx*cell+sx, y, cell*0.22, 0, Math.PI*2); ctx.fill(); } } }
+  // 地面
+  ctx.fillStyle='#7FB069'; ctx.fillRect(0, scene.groundY, VW, VH-scene.groundY);
+  if(VIEW==='oblique'){ drawGroundDepth(); return; }
+  const [x0] = W2S(-80,0), [x1] = W2S(MAT_X0,0);
+  ctx.fillStyle='#C4553A'; ctx.fillRect(x0, scene.groundY, x1-x0, Math.max(6, 0.25*s));
+  ctx.fillStyle='#FBF8F1'; ctx.fillRect(x0, scene.groundY+Math.max(6,0.25*s)-2, x1-x0, 2);
+  // 距離の目印
+  ctx.fillStyle='#FBF8F1'; ctx.font=`600 ${Math.max(10,s*0.22)}px 'Barlow Condensed',sans-serif`; ctx.textAlign='center';
+  for(let m=-60;m<0;m+=5){ const [mx] = W2S(m,0); if(mx<-20||mx>VW+20) continue; ctx.fillRect(mx-1, scene.groundY, 2, Math.max(6,0.25*s)); ctx.fillText(`${-m}m`, mx, scene.groundY+Math.max(6,0.25*s)+Math.max(10,s*0.22)); }
+  ctx.textAlign='left';
+}
+// 奥行きのある地面：奥の看板の壁 → 奥の芝 → 助走路（上の面。両側に白線、5mごとの線は奥へ斜めにのびる）→ 手前の芝
+const RW = 1.5, WALL_Z = 7;
+function drawGroundDepth(){
+  const s = scene.scale, gy = scene.groundY;
+  const wy = W2Sz(0,0,WALL_Z)[1];
+  ctx.fillStyle='#74A55F'; ctx.fillRect(0, wy, VW, gy-wy+1);
+  ctx.fillStyle='#5E6E80'; ctx.fillRect(0, wy - Math.max(6,0.28*s), VW, Math.max(6,0.28*s));
+  ctx.fillStyle='#7FB069'; ctx.fillRect(0, gy, VW, VH-gy);
+  const poly=(pts,col)=>{ ctx.fillStyle=col; ctx.beginPath(); pts.forEach(([x,y],i)=> i?ctx.lineTo(x,y):ctx.moveTo(x,y)); ctx.closePath(); ctx.fill(); };
+  poly([W2Sz(-80,0,-RW),W2Sz(MAT_X0,0,-RW),W2Sz(MAT_X0,0,RW),W2Sz(-80,0,RW)], '#C4553A');
+  const line=(a,b,w,col)=>{ ctx.strokeStyle=col; ctx.lineWidth=w; ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); };
+  line(W2Sz(-80,0,-RW),W2Sz(MAT_X0,0,-RW),2,'#FBF8F1'); line(W2Sz(-80,0,RW),W2Sz(MAT_X0,0,RW),1.5,'#FBF8F1cc');
+  // ボックス：助走路のまん中に掘った溝（上から見た形）
+  const bw = 0.4; poly([W2Sz(-1.0,0,-bw*0.3),W2Sz(0,0,-bw),W2Sz(0,0,bw),W2Sz(-1.0,0,bw*0.3)], '#3C4A5C');
+  ctx.fillStyle='#FBF8F1'; ctx.font=`600 ${Math.max(10,s*0.22)}px 'Barlow Condensed',sans-serif`; ctx.textAlign='center';
+  for(let m=-60;m<0;m+=5){ const a = W2Sz(m,0,-RW), b = W2Sz(m,0,RW); if(a[0]<-40||a[0]>VW+40) continue;
+    line(a,b,2,'#FBF8F1'); ctx.fillText(`${-m}m`, a[0], a[1]+Math.max(12,s*0.3)); }
+  ctx.textAlign='left';
+}
+// 体の影（体の真下、z=0 の地面かマットの上）。高いほど薄く小さく
+function drawShadow(x, y){
+  if(VIEW!=='oblique') return;
+  const s = scene.scale, g = groundAt(x), h = Math.max(0, y - g), k = Math.max(0.25, 1 - h/6);
+  const [sx,sy] = W2Sz(x, g, 0); ctx.fillStyle=`rgba(29,36,51,${0.22*k})`; ctx.beginPath(); ctx.ellipse(sx, sy, 0.45*s*k, 0.09*s*k, 0, 0, Math.PI*2); ctx.fill();
+}
+const MAT_HALF = 2.0;   // マットの幅の半分（m）。支柱（z=±2.25）はマットの横に立つ
+function drawMatBox(){
+  const s = scene.scale;
+    const Z0=-MAT_HALF, Z1=MAT_HALF, P=(x,y,z)=>W2Sz(x,y,z);
+    const poly=(pts,col)=>{ ctx.fillStyle=col; ctx.beginPath(); pts.forEach(([x,y],i)=> i?ctx.lineTo(x,y):ctx.moveTo(x,y)); ctx.closePath(); ctx.fill(); };
+    poly([P(MAT_X1,0,Z0),P(MAT_X1,0,Z1),P(MAT_X1,MAT_H,Z1),P(MAT_X1,MAT_H,Z0)], '#244C88');                 // 右の面
+    poly([P(MAT_X0,MAT_H,Z0),P(MAT_X1,MAT_H,Z0),P(MAT_X1,MAT_H,Z1),P(MAT_X0,MAT_H,Z1)], '#3F70BA');         // 上の面
+    const [mx0,my] = P(MAT_X0,MAT_H,Z0), [mx1] = P(MAT_X1,0,Z0);
+    ctx.fillStyle='#2E5FA8'; ctx.fillRect(mx0, my, mx1-mx0, MAT_H*s);                                        // 手前の面
+    ctx.fillStyle='#244C88'; ctx.fillRect(mx0, my+MAT_H*s*0.55, mx1-mx0, MAT_H*s*0.12);
+    ctx.fillStyle='#4A7CC4'; ctx.fillRect(mx0, my, mx1-mx0, Math.max(2,s*0.06));
+}
+function drawPit(bar, barFall){
+  const s = scene.scale;
+  // ボックス（真横のときだけ。奥行きのときは地面と一緒に描く）
+  if(VIEW!=='oblique'){ const [bx, by] = W2S(0,0); ctx.fillStyle='#3C4A5C'; ctx.beginPath(); ctx.moveTo(bx-0.5*s,by); ctx.lineTo(bx,by+0.2*s); ctx.lineTo(bx+0.06*s,by); ctx.fill(); }
+  // マット
+  if(VIEW==='oblique'){
+    drawStand(bar, barFall, +1, 'post');   // 奥の支柱はマットの向こう側
+    drawMatBox();
+  } else {
+  const [mx0,my] = W2S(MAT_X0, MAT_H), [mx1] = W2S(MAT_X1,0);
+  ctx.fillStyle='#2E5FA8'; ctx.fillRect(mx0, my, mx1-mx0, MAT_H*s);
+  ctx.fillStyle='#244C88'; ctx.fillRect(mx0, my+MAT_H*s*0.55, mx1-mx0, MAT_H*s*0.12);
+  ctx.fillStyle='#4A7CC4'; ctx.fillRect(mx0, my, mx1-mx0, Math.max(2,s*0.06));
+  }
+  if(VIEW==='oblique') drawStand(bar, barFall, +1, 'bar');   // バーの奥の半分（体より後ろ）
+}
+// 支柱とバー。バーの長さ 4.5m、支柱は z=±2.25。side=+1 は奥の支柱とバーの奥半分、-1 は手前の支柱とバーの手前半分
+const BAR_HALF = 2.25;
+function drawStand(bar, fall, side, part){
+  const s = scene.scale, z = side*BAR_HALF, w = Math.max(3, s*(side>0 ? 0.08 : 0.1));
+  const [px,py] = W2Sz(BAR_X, 0, z), [,pt] = W2Sz(BAR_X, bar+0.45, z);
+  if(part !== 'bar'){
+  ctx.fillStyle = side>0 ? '#6F7C91' : '#8A97AB'; ctx.fillRect(px-w/2, pt, w, py-pt);
+  ctx.fillStyle='#1D2433'; ctx.fillRect(px-Math.max(4,s*0.12), py-Math.max(3,s*0.05), Math.max(8,s*0.24), Math.max(3,s*0.05));
+  }
+  if(part === 'post') return;
+  // バー：落ちるときは両端がマット側へずれながら下がる
+  const endY = bar - fall*(bar-MAT_H-0.05), endX = BAR_X + fall*0.5;
+  const [cx,cy] = W2Sz(endX, endY, 0), [ex,ey] = W2Sz(endX, endY, z);
+  ctx.lineCap='butt'; ctx.lineWidth=Math.max(3,s*0.07);
+  const n=4; for(let k=0;k<n;k++){ ctx.strokeStyle = (k+(side>0?0:1))%2?'#1D2433':'#F2C230'; ctx.beginPath();
+    ctx.moveTo(cx+(ex-cx)*k/n, cy+(ey-cy)*k/n); ctx.lineTo(cx+(ex-cx)*(k+1)/n, cy+(ey-cy)*(k+1)/n); ctx.stroke(); }
+  ctx.fillStyle='#5E6B80'; ctx.fillRect(px-w*0.2-(side>0?0:w*0.6), W2Sz(BAR_X,bar,z)[1]+Math.max(2,s*0.04), w*0.9, Math.max(3,s*0.05));
+}
+// 真横から見た支柱とバー。奥の支柱は手前の支柱に重なって見えない。バーは奥へのびる棒なので、手前の端（丸）だけが見える
+function drawPostFront(bar, fall=0){
+  if(VIEW==='oblique') return drawStand(bar, fall, -1);
+  const s = scene.scale, w = Math.max(4,s*0.1);
+  const [px,py] = W2S(BAR_X, 0), [,pt] = W2S(0, bar+0.45); ctx.fillStyle='#8A97AB'; ctx.fillRect(px-w/2, pt, w, py-pt);
+  ctx.fillStyle='#1D2433'; ctx.fillRect(px-Math.max(5,s*0.14), py-Math.max(3,s*0.06), Math.max(10,s*0.28), Math.max(3,s*0.06));
+  const [,ky] = W2S(0, bar); ctx.fillStyle='#5E6B80'; ctx.fillRect(px - w*0.9, ky + Math.max(7, s*0.15), w*1.8, Math.max(3, s*0.05));
+  const [bx,by] = W2S(BAR_X + fall*0.5, bar - fall*(bar-MAT_H-0.05)), r = Math.max(7, s*0.15);
+  ctx.fillStyle='#F2C230'; ctx.strokeStyle='#1D2433'; ctx.lineWidth=Math.max(1.5, r*0.16); ctx.beginPath(); ctx.arc(bx, by, r, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle='#1D2433'; ctx.lineWidth=Math.max(2, r*0.32); ctx.beginPath(); ctx.arc(bx, by, r*0.62, 0, Math.PI*2); ctx.stroke();
+}
+
+// 持って走るときの向き。描いたままで地面にもぐらなければそのまま。
+// もぐるときだけ、形は変えずに手を軸に回して、先を前へ起こす（いちばん小さい回し方）
+function carryPose(st){
+  const P0 = st.pts, hand = P0[st.handIdx], HAND_Y = 1.25;
+  const rel = P0.map(p=>({x:p.x-hand.x, y:p.y-hand.y}));
+  const ok = a => { const c = Math.cos(a), s = Math.sin(a); let tipX = 0;
+    for(let i=0;i<rel.length;i++){ const x = rel[i].x*c - rel[i].y*s, y = rel[i].x*s + rel[i].y*c;
+      if(HAND_Y + y < 0.12) return false; if(i===0) tipX = x; }
+    return true; };
+  let rot = 0;
+  if(!ok(0)){
+    rot = null;
+    for(let d=0.02; d<=Math.PI; d+=0.02){ if(ok(d)){ rot = d; break; } if(ok(-d)){ rot = -d; break; } }
+    if(rot === null) rot = 0;
+  }
+  const c = Math.cos(rot), s = Math.sin(rot);
+  return { rot, pts: rel.map(p=>({x:p.x*c - p.y*s, y:p.x*s + p.y*c})) };
+}
+// 突き立てたあと、竿がバー・支柱・地面にかからないよう、ふくらむ側と大きさを選ぶ
+// まず描いたそのままを試し、だめなら走路側へ返す。それでもはみ出すときだけ曲がりを小さくする
+function fitPoleShape(st, sim, xp, H0){
+  // しなる（押し縮む）ときのふくらみ：描いた曲がりがあればその側、まっすぐなら上（マット側）。実際の棒高跳びと同じ
+  const bulge0 = st.bend >= 0.02 ? st.side : -1;
+  const poses = [{x:xp, y:H0}];
+  sim.frames.forEach((f,i)=>{ if((f.phase==='pole'||f.phase==='back') && i%3===0) poses.push({x:f.x, y:f.y}); });
+  const bad = (sgn, s) => { let v = 0;
+    for(const hp of poses){
+      const pts = polePts({x:0,y:0}, hp, st.shape.map(o=>({u:o.u, d:o.d*sgn*s})), st.c0, bulge0*sgn, s);
+      for(const p of pts){ if(p.x > 0.05 && p.y > 0.15) v = Math.max(v, p.x-0.05); if(p.y < 0.02) v = Math.max(v, 0.02-p.y); } }
+    return v; };
+  // まず描いたままの向き、だめなら反対側へ。それでもはみ出すときだけ、曲がり・しなりを小さく見せる
+  const firstFit = sgn => { let least = { v:1e9, s:0.15 }; for(let s=1; s>=0.15; s-=0.05){ const v = bad(sgn, s); if(v < 0.04) return { s, ok:true }; if(v < least.v) least = { v, s }; } return { s: least.s, ok:false, v: least.v }; };
+  const keep = firstFit(1), flip = firstFit(-1);
+  let best;
+  if(keep.ok && (!flip.ok || flip.s < keep.s + 0.35)) best = { sgn:1, s:keep.s };
+  else if(flip.ok) best = { sgn:-1, s:flip.s };
+  else best = (keep.v <= flip.v) ? { sgn:1, s:keep.s } : { sgn:-1, s:flip.s };
+  best.xside = bulge0*best.sgn;
+  return best;
+}
+// 竿がバー・支柱の側（ボックスより先の高い所）や地面に食い込むか
+function poleBad(pts){ for(let i=1;i<pts.length;i++){ const p = pts[i]; if((p.x > 0.06 && p.y > 0.1) || p.y < -0.02) return true; } return false; }
+// 食い込むときは、食い込まなくなるところまで曲がり（と、しなりのふくらみ）を小さくする。一度小さくしたら手を離すまで大きく戻さない
+function safePole(A, base, top, c0, side, fWanted, exWanted){
+  const sgn = Math.sign(fWanted) || 1, want = Math.abs(fWanted);
+  let mag = Math.min(want, A.fCap == null ? Infinity : A.fCap), pts = null;
+  for(let k=0;k<=16;k++){
+    const m = mag*(1 - k/16), r = want > 1e-6 ? m/want : 0;
+    // 曲がりと同じ割合で、先や手元から外へはみ出した部分（端で折り返したかぎなど）も縮める
+    const sh = A.st.shape.map(o=>{ const uc = Math.max(0, Math.min(1, o.u)); return { u: uc + (o.u - uc)*Math.min(1, m), d: o.d*sgn*m }; });
+    pts = polePts(base, top, sh, c0, side, (exWanted==null?1:exWanted)*Math.min(1, r));
+    if(!poleBad(pts) || k===16){ A.fCap = m; A.fSign = sgn; return pts; }
+  }
+  return pts;
+}
+function polePts(base, top, shape, c0, side, exScale){
+  const dx=top.x-base.x, dy=top.y-base.y, r=Math.hypot(dx,dy)||1;
+  const nx = -dy/r, ny = dx/r;
+  const extra = (r < c0 ? Math.sqrt(3*r*Math.max(0,c0-r)/8) : 0) * (exScale == null ? 1 : exScale);
+  const sd = side || 1;
+  return shape.map(o=>{ const d = o.d*r + sd*extra*Math.sin(Math.PI*o.u); return { x: base.x+dx*o.u+nx*d, y: base.y+dy*o.u+ny*d }; });
+}
+function liftPts(pts, m){ m = m==null ? 0.03 : m; let mn = Infinity; pts.forEach(p=>{ if(p.y<mn) mn=p.y; }); const k = mn < m ? m-mn : 0; return k ? pts.map(p=>({x:p.x, y:p.y+k})) : pts; }
+// 折れた竿の半分。1本の竿の絵を、折れ目で切ったように見せる（両方に先や持ち手が付いて2本に見えないように）
+// 折れ目の先にもう半分ぶんまっすぐ伸ばして1本として描き、折れ目より先を切り落とす。切り口にはささくれ
+function drawHalfPole(pts, otherL, breakAtStart, id, limX){
+  if(pts.length < 2) return;
+  const P = breakAtStart ? pts.slice().reverse() : pts.slice();          // P の最後が折れ目
+  const n = P.length, e = P[n-1], q = P[n-2], dl = Math.hypot(e.x-q.x, e.y-q.y) || 1, dx = (e.x-q.x)/dl, dy = (e.y-q.y)/dl;
+  const K = 8; for(let k=1;k<=K;k++) P.push({ x:e.x + dx*otherL*k/K, y:e.y + dy*otherL*k/K });
+  const full = breakAtStart ? P.slice().reverse() : P;
+  const s = scene.scale, [bx,by] = W2S(e.x, e.y), sdx = dx, sdy = -dy, nx = -sdy, ny = sdx, R = Math.max(VW, VH)*3;
+  ctx.save(); ctx.beginPath();                                           // 折れ目より手前（残す側）だけを描く
+  ctx.moveTo(bx + nx*R, by + ny*R); ctx.lineTo(bx - nx*R, by - ny*R); ctx.lineTo(bx - nx*R - sdx*R, by - ny*R - sdy*R); ctx.lineTo(bx + nx*R - sdx*R, by + ny*R - sdy*R); ctx.closePath(); ctx.clip();
+  drawPoleWorld(full, id, limX, 'lift');
+  ctx.restore();
+  // 切り口のささくれ
+  const w = Math.max(4, (POLE_W[id]||0.1)*s)*0.55; ctx.fillStyle = '#E9D2A6'; ctx.strokeStyle = '#1D2433'; ctx.lineWidth = Math.max(1, w*0.12);
+  const [cx,cy] = W2S(e.x, Math.max(e.y, (POLE_W[id]||0.1)*0.5+0.01));
+  ctx.beginPath(); ctx.moveTo(cx + nx*w, cy + ny*w);
+  for(let i=1;i<=4;i++){ const t = 1 - i/2.5, j = (i%2 ? 0.55 : 0.05)*w; ctx.lineTo(cx + nx*w*t + sdx*j, cy + ny*w*t + sdy*j); }
+  ctx.lineTo(cx - nx*w, cy - ny*w); ctx.closePath(); ctx.fill(); ctx.stroke();
+}
+function drawPoleWorld(pts, id, limX, raw){
+  const half = (POLE_W[id]||0.1)*0.5 + 0.01;   // 線の太さの半分：芝（走路の面より下）にはみ出さない
+  if(raw === 'lift'){ pts = liftPts(pts, half); if(limX != null) pts = pts.map(p=>({x:Math.min(p.x,limX), y:p.y})); }
+  else if(raw) { pts = liftPts(pts, 0); }
+  else if(limX != null) pts = pts.map(p=>({ x: Math.min(p.x, limX), y: Math.max(0.02, p.y) }));
+  else pts = pts.map(p=>({ x:p.x, y: Math.max(0.02, p.y) }));
+  const sp = pts.map(p=>{ const [x,y]=W2S(p.x,p.y); return {x,y}; });
+  let art = sp;
+  if(POLE_ART_SHIFT && sp.length === POLE_N + 1){ const N = POLE_N, s0 = (N - POLE_ART_SHIFT) % N; art = []; for(let i=0;i<=N;i++) art.push(sp[(s0 + i) % N]); }
+  drawItemStroke(ctx, POLE_ART_REV ? art.slice().reverse() : art, id, Math.max(4, POLE_W[id]*scene.scale));
+}
+
+// 体の形でバーとの当たりを調べる。バーは画面の奥へのびる棒なので、横から見ると x=BAR_X の1点。
+// 体（腕・胴・脚・頭）がその縦の線を横切る高さで決める：全部バーより上ならクリア、上と下の両方があれば当たった、全部下なら高さが足りない
+const BODY_J = { hand:[0,0], sh:[-0.1,0.35], hip:[-0.05,0.95], k1:[0.05,1.4], f1:[0.02,1.82], k2:[0.12,1.35], f2:[0.12,1.78],
+  h1:[-0.13,0.3], h2:[-0.28,0.15], h3:[-0.43,0.3], h4:[-0.28,0.45] };
+const BODY_TUCK = { k1:[0.40,1.05], f1:[0.30,1.30], k2:[0.46,1.00], f2:[0.40,1.26] }; // 竿につかまって振り上げるときの、ひざを曲げた脚
+function bodyJoints(tuck){
+  const o = {}; for(const k in BODY_J) o[k] = BODY_J[k];
+  if(tuck > 0) for(const k in BODY_TUCK){ const a = BODY_J[k], b = BODY_TUCK[k]; o[k] = [a[0]+(b[0]-a[0])*tuck, a[1]+(b[1]-a[1])*tuck]; }
+  return o;
+}
+const BODY_SEGS = [['hand','sh'],['sh','hip'],['hip','k1'],['k1','f1'],['hip','k2'],['k2','f2'],['h1','h2'],['h2','h3'],['h3','h4'],['h4','h1']];
+const BAR_EPS = 0.03;
+// 手を原点にした、体の関節の位置（上が＋）
+function bodyRel(beta, mir, tuck){ return bodyWorld({ x:0, y:0, beta, mir, tuck }); }
+// 着地したときに、いちばん低い関節（たいてい頭）を支点にして、脚がマットに落ちるまで体を回す角度を探す
+// 体が地面（マット）についたあと、ついた所を支点に、重さで倒れて落ち着く向きと位置を探す
+// マットの端にかかったときは、体の重心がある側へ倒れる：重心がマットの上なら、勢いのまま全身がマットに乗る。
+// 重心がマットの外なら、マットからずり落ちて全身が地面に。はみ出したまま宙に浮いたり、急に位置が飛んだりしない
+function findSettle(x, y, beta, mir){
+  const R0 = bodyRel(beta, mir, 0);
+  let pj = null; for(const k in R0){ if(pj === null || R0[k].y < R0[pj].y) pj = k; }
+  const px = x + R0[pj].x, py = y + R0[pj].y;
+  const LEGS = ['hip','k1','f1','k2','f2'];
+  const score = d => { const R = bodyRel(beta + d, mir, 0); let mn = Infinity, legs = -Infinity;
+    for(const k in R){ const yy = R[k].y - R[pj].y; if(k !== pj) mn = Math.min(mn, yy); }
+    for(const k of LEGS) legs = Math.max(legs, R[k].y - R[pj].y);
+    return { ok: mn >= -0.02, legs }; };
+  let best = { d:0, legs: score(0).legs };
+  for(let d=-1.3; d<=1.3001; d+=0.02){ const s = score(d); if(s.ok && s.legs < best.legs - 1e-6 && (s.legs < best.legs - 0.02 || Math.abs(d) < Math.abs(best.d))) best = { d, legs: s.legs }; }
+  // 倒れたあとの体の広がりから、どちら側に落ち着くかと、ずれる量を決める
+  const R = bodyRel(beta + best.d, mir, 0); let mnX = Infinity, mxX = -Infinity, mnY = Infinity, cx = 0, n = 0;
+  for(const k in R){ const jx = px + R[k].x - R[pj].x, jy = py + R[k].y - R[pj].y; mnX = Math.min(mnX, jx); mxX = Math.max(mxX, jx); mnY = Math.min(mnY, jy); cx += jx; n++; }
+  cx /= n;
+  let sx = 0;
+  // マットの上に乗れるのは、体がマットの上の面より高い所から触れたときだけ（低い所から一気に持ち上がらないように）
+  const onMat = groundAt(cx) > 0 && py >= MAT_H - 0.05;
+  if(onMat){ if(mnX < MAT_X0 + 0.08) sx = MAT_X0 + 0.08 - mnX; if(mxX + sx > MAT_X1 - 0.08) sx = MAT_X1 - 0.08 - mxX; }
+  else if(cx < (MAT_X0 + MAT_X1)/2){ if(mxX > MAT_X0 - 0.05) sx = MAT_X0 - 0.05 - mxX; }
+  else { if(mnX < MAT_X1 + 0.05) sx = MAT_X1 + 0.05 - mnX; }
+  const sy = (onMat ? MAT_H : 0) + 0.04 - mnY;
+  return { d: best.d, pj, px, py, sx, sy };
+}
+function bodyWorld(v){
+  const c = Math.cos(-v.beta), s = Math.sin(-v.beta), q = (v.mir==null ? 1 : v.mir), o = {}, J = bodyJoints(v.tuck||0);
+  for(const k in J){ const px = J[k][0]*q, py = J[k][1]; o[k] = { x: v.x + px*c - py*s, y: v.y - (px*s + py*c) }; }
+  return o;
+}
+function judgeBody(A, jd0){
+  if(jd0.kind==='break' || jd0.kind==='back') return jd0;
+  const fr = A.sim.frames, keepT = A.t;
+  let above = false, below = false, contactI = -1, prev = null;
+  for(let i=0;i<fr.length;i++){
+    A.t = A.T + i/60;
+    const J = bodyWorld(vaulterAt(A));
+    const ys = [];
+    // その瞬間、バーの線を横切っている体の部分
+    for(const [a,b] of BODY_SEGS){ const p = J[a], q = J[b];
+      if((p.x - BAR_X)*(q.x - BAR_X) <= 0 && p.x !== q.x){ const u = (BAR_X - p.x)/(q.x - p.x); ys.push(p.y + (q.y - p.y)*u); } }
+    // 前の瞬間からいまの瞬間までに、線を越えた関節
+    if(prev) for(const k in J){ const p = prev[k], q = J[k];
+      if((p.x - BAR_X)*(q.x - BAR_X) < 0){ const u = (BAR_X - p.x)/(q.x - p.x); ys.push(p.y + (q.y - p.y)*u); } }
+    prev = J;
+    // 竿につかまっているあいだは、バーの高さにちょうど触れたときだけ当たり（振り上げで脚が下をくぐるのは数えない）
+    const onPole = vaulterAt(A).phase === 'pole';
+    for(const y of ys){
+      if(y >= A.bar - BAR_EPS && y <= A.bar + BAR_EPS){ above = below = true; }
+      else if(y > A.bar) above = true;
+      else if(!onPole) below = true;
+    }
+    if(above && below){ contactI = i; break; }
+  }
+  A.t = keepT;
+  if(contactI >= 0) return { ok:false, kind:'hit', contactI };
+  if(above) return { ok:true, kind:'clear' };
+  if(below) return { ok:false, kind:'low' };
+  return { ok:false, kind:(fr[fr.length-1].x < BAR_X ? 'short' : 'over') };
+}
+const BODY_PTS = [[-0.1,0.35],[-0.05,0.95],[0.05,1.4],[0.02,1.82],[0.12,1.35],[0.12,1.78],[-0.28,0.45],[-0.43,0.3],[-0.28,0.15],[-0.13,0.3]];
+function bodyLowest(beta, mir){ // 手より何m下に体のいちばん低い所があるか
+  const c = Math.cos(-beta), s = Math.sin(-beta), q = (mir==null ? 1 : mir); let m = 0;
+  BODY_PTS.forEach(([px,py])=>{ const dy = px*q*s + py*c; if(dy>m) m = dy; }); return m;
+}
+function drawFigure(x, y, beta, run, t, mir, tuck){
+  const s = scene.scale; const [hx,hy] = W2S(x,y);
+  ctx.save(); ctx.translate(hx,hy);
+  ctx.strokeStyle='#1D2433'; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.lineWidth=Math.max(3,s*0.09);
+  if(run){
+    // 走る：手は胸の前で竿を持つ
+    const ph = t*11, sw = Math.sin(ph);
+    const hip = [ -0.15*s, 0.45*s ], sh = [ -0.05*s, -0.05*s ], head=[ 0.02*s, -0.32*s ];
+    ctx.beginPath(); ctx.moveTo(sh[0],sh[1]); ctx.lineTo(hip[0],hip[1]); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(hip[0],hip[1]); ctx.lineTo(hip[0]+0.25*s*sw, hip[1]+0.42*s); ctx.lineTo(hip[0]+0.2*s*sw-0.12*s, hip[1]+0.85*s+Math.min(0,0.15*s*sw)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(hip[0],hip[1]); ctx.lineTo(hip[0]-0.25*s*sw, hip[1]+0.42*s); ctx.lineTo(hip[0]-0.2*s*sw-0.12*s, hip[1]+0.85*s+Math.min(0,-0.15*s*sw)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(sh[0],sh[1]); ctx.lineTo(0,0); ctx.stroke();
+    ctx.fillStyle='#FBF8F1'; ctx.beginPath(); ctx.arc(head[0],head[1],0.15*s,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  } else {
+    // 手の位置から、体が β の向きにぶら下がる
+    ctx.rotate(-beta);
+    ctx.scale(mir==null ? 1 : (Math.abs(mir) < 0.08 ? (mir<0?-0.08:0.08) : mir), 1); // 体の左右（裏返し）
+    const L = s;
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-0.1*L,0.35*L); ctx.stroke(); // 腕
+    const sh=[-0.1*L,0.35*L], hip=[-0.05*L,0.95*L];
+    ctx.beginPath(); ctx.moveTo(sh[0],sh[1]); ctx.lineTo(hip[0],hip[1]); ctx.stroke();
+    const J = bodyJoints(tuck||0);
+    ctx.beginPath(); ctx.moveTo(hip[0],hip[1]); ctx.lineTo(J.k1[0]*L,J.k1[1]*L); ctx.lineTo(J.f1[0]*L,J.f1[1]*L); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(hip[0],hip[1]); ctx.lineTo(J.k2[0]*L,J.k2[1]*L); ctx.lineTo(J.f2[0]*L,J.f2[1]*L); ctx.stroke();
+    ctx.fillStyle='#FBF8F1'; ctx.beginPath(); ctx.arc(-0.28*L,0.3*L,0.15*L,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function setCamera(tx, ty, bar, needH, needW, followX){
+  // needH・needW：画面に入れたい高さ・幅（メートル）。竿が大きいときは引いて映す
+  const viewH = Math.max(5.2, bar + 2.4, needH || 0);
+  const viewW = Math.max(7.5, needW || 0);
+  const gY = VH - Math.max(60, VH*0.12);
+  const target = Math.min((gY - 76)/viewH, VW/viewW);
+  const first = scene.camX === null;
+  scene.scale = (first || !scene.scale) ? target : scene.scale + (target-scene.scale)*0.1;
+  scene.groundY = VH - Math.max(60, VH*0.12);
+  if(followX != null){
+    // 選手について行きながら、映す位置のずれだけをなめらかに変える（踏み切りで急に動かない）
+    const off = tx - followX;
+    scene.camOff = (first || scene.camOff == null) ? off : scene.camOff + (off - scene.camOff)*0.1;
+    scene.camX = followX + scene.camOff;
+  } else {
+    scene.camOff = null;
+    if(first) scene.camX = tx; else scene.camX += (tx-scene.camX)*0.12;
+  }
+}
+
+let POLE_ART_REV = false, POLE_ART_SHIFT = 0, POLE_N = 0;
+function drawWorld(A){
+  POLE_ART_SHIFT = A ? (A.st.shift||0) : 0; POLE_N = A ? A.st.pts.length - 1 : 0;
+  POLE_ART_REV = !!(A && (A.artRev != null ? A.artRev : A.st.pts[0].y > A.st.pts[A.st.handIdx].y));
+  const bar = A ? A.bar : G_.bar;
+  drawBackground();
+  drawPit(bar, A ? A.barFall : 0);
+  if(!A){ drawPostFront(bar, 0); return; }
+  const v = vaulterAt(A);
+  drawShadow(v.x, v.run ? 0 : v.y - 1.0);
+  // 軌跡
+  if(CFG.trail && A.trail.length>1){ ctx.strokeStyle='#1D243355'; ctx.setLineDash([4,5]); ctx.lineWidth=2; ctx.beginPath();
+    A.trail.forEach((p,i)=>{ const [x,y]=W2S(p.x,p.y); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.stroke(); ctx.setLineDash([]); }
+  const c0 = A.st.c0, id = A.itemId;
+  const morph = v.run ? 0 : Math.min(1, Math.max(0, (A.t - A.T)/0.3)), mk = morph*morph*(3-2*morph);
+  const fNow = 1 + (A.fit.sgn*A.fit.s - 1)*mk;
+  const shape = A.st.shape.map(o=>({u:o.u, d:o.d*fNow}));
+  // 竿
+  if(v.run){
+    // 描いたそのままの向き・形で持って走る。踏み切りの直前に、先をボックスへ向けて回す
+    // ふくらみがバー側を向くときだけ、回しながら走路側へ返す（突き立てたあとバーに当たらないように）
+    const P0 = A.st.pts, hand = P0[A.st.handIdx], tip = P0[0];
+    const aD = Math.atan2(tip.y-hand.y, tip.x-hand.x) + A.carry.rot;
+    const aP = Math.atan2(-A.H0, -A.xp);
+    let dA = aP - aD; while(dA > Math.PI) dA -= 2*Math.PI; while(dA < -Math.PI) dA += 2*Math.PI;
+    const k = Math.max(0, Math.min(1, (A.t-(A.T-0.45))/0.45));
+    const e = k*k*(3-2*k), rot = aD + dA*e;
+    const tipW = { x: v.x + Math.cos(rot)*c0, y: Math.max(0, v.y + Math.sin(rot)*c0) }; // 先は地面より下に行かない
+    const runPts = k > 0 ? safePole(A, tipW, {x:v.x,y:v.y}, c0, 1, 1, 1) : polePts(tipW, {x:v.x,y:v.y}, shape, c0, 1);
+    A.runPts = runPts.map(p=>({x:p.x-v.x, y:p.y-v.y}));
+    drawPoleWorld(runPts, id, null, true);
+  } else if(v.phase==='pole'||v.phase==='back'){
+    drawPoleWorld(safePole(A, {x:0,y:0}, {x:v.x,y:v.y}, c0, A.fit.xside, fNow, 1 + (A.fit.s - 1)*mk), id, 0.05);
+  } else {
+    const fr = A.sim.frames, rel = fr.findIndex(q=>q.phase!=='pole'&&q.phase!=='back');
+    const since = Math.max(0, (A.t - A.T) - rel/60);
+    if(A.sim.result==='break'){
+      // 折れた瞬間の竿（ボックス→手）から、折れ目の位置を出す
+      if(!A.brk){
+        const lf = fr[Math.max(0,rel-1)];
+        const full = polePts({x:0,y:0}, {x:lf.x,y:lf.y}, shape, c0, A.fit.xside, A.fit.s);
+        const m = full[Math.floor(full.length/2)];
+        A.brk = { mx:m.x, my:m.y, hx:lf.x, hy:lf.y };
+      }
+      const B = A.brk, low = shape.filter(o=>o.u<=0.5).map(o=>({u:o.u*2,d:o.d*0.5})), up = shape.filter(o=>o.u>=0.5).map(o=>({u:(o.u-0.5)*2,d:o.d*0.5}));
+      const lowL = Math.hypot(B.mx, B.my), upL = Math.hypot(B.hx-B.mx, B.hy-B.my);
+      // 下半分：ボックスを支点に、後ろ（走路側）へ倒れて地面で止まる
+      const a0 = Math.atan2(B.my, B.mx), aEnd = Math.PI - 0.06;
+      const kL = Math.min(1, since*since*2.2), aL = a0 + (aEnd - a0)*kL;
+      drawHalfPole(polePts({x:0,y:0}, {x:Math.cos(aL)*lowL, y:Math.sin(aL)*lowL}, low, lowL), upL, false, id, 0.03);
+      // 上半分：手から離れ、折れ目でつながったまま下半分と一緒に倒れる（折りたたまれるように）
+      const Mx = Math.cos(aL)*lowL, My = Math.sin(aL)*lowL;
+      const u0 = Math.atan2(B.hy-B.my, B.hx-B.mx), uEnd = aL + 0.35;          // 最後は下半分の先に、少し折れ曲がって重なる
+      let du = uEnd - u0; while(du > Math.PI) du -= 2*Math.PI; while(du < -Math.PI) du += 2*Math.PI;
+      const kU = Math.min(1, since/0.7), eU = kU*kU*(3-2*kU), aU = u0 + du*eU;
+      const top = { x: Mx + Math.cos(aU)*upL, y: Math.max(0.03, My + Math.sin(aU)*upL) };
+      drawHalfPole(polePts({x:Mx, y:Math.max(0.03,My)}, top, up, upL), lowL, true, id, null);
+    } else if(id==='kasa' && A.sim.result!=='back'){
+      // 傘は持ったまま。手を離したら0.3秒で頭の上へ振り上げ、ひらくときは0.3秒で広がる
+      const HOLD = Math.PI/2 + 0.25;
+      if(A.openI == null){ A.openI = fr.findIndex(q=>q.open); if(A.openI < 0) A.openI = Infinity; }
+      const iNow = Math.min(fr.length-1, Math.floor((A.t-A.T)*60));
+      if(iNow >= A.openI){
+        const k = Math.min(1, (iNow - A.openI)/18), e = k*k*(3-2*k);
+        const [sx,sy] = W2S(v.x, v.y);
+        drawOpenKasa(ctx, sx, sy, c0*scene.scale, -(HOLD - Math.PI/2)*(1-e), e, Math.max(4, POLE_W.kasa*scene.scale));
+      } else {
+        const a0 = Math.atan2(-v.y, -v.x);                 // 手を離した瞬間：手から見たボックスの向き
+        let d = HOLD - a0; while(d > Math.PI) d -= 2*Math.PI; while(d < -Math.PI) d += 2*Math.PI;
+        if(d < 0) d += 2*Math.PI;                           // 前（上）回りで振り上げる
+        const k = Math.min(1, since/0.3), e = k*k*(3-2*k), ang = a0 + d*e;
+        const lf = fr[Math.max(0,rel-1)], kb = Math.min(1, since/0.35), eb = 1 - Math.pow(1-kb, 3), fRel = A.fCap == null ? fNow : (A.fSign||1)*Math.min(Math.abs(fNow), A.fCap);
+        const len = lf.r + (c0 - lf.r)*eb, fBack = fRel + (A.fit.sgn - fRel)*eb;
+        const shB = A.st.shape.map(o=>({u:o.u, d:o.d*fBack}));
+        drawPoleWorld(polePts({x:v.x+Math.cos(ang)*len,y:v.y+Math.sin(ang)*len}, {x:v.x,y:v.y}, shB, c0, A.fit.xside, A.fit.s + (1 - A.fit.s)*eb), id, null, 'lift');
+      }
+    } else {
+      // 手を離した竿が、後ろへ倒れる
+      const lf = fr[Math.max(0,rel-1)];
+      const ang0 = Math.atan2(lf.y, lf.x); const fall = Math.min(Math.PI - ang0 - 0.05, since*since*2.2);
+      const ang = ang0 + fall;
+      // 押し縮められていた竿が、0.35秒かけて元の長さと描いた形へ戻る（一気に伸びない）
+      const kb = Math.min(1, since/0.35), eb = 1 - Math.pow(1-kb, 3), fRel = A.fCap == null ? fNow : (A.fSign||1)*Math.min(Math.abs(fNow), A.fCap);
+      const len = lf.r + (c0 - lf.r)*eb, fBack = fRel + (A.fit.sgn - fRel)*eb;
+      const shB = A.st.shape.map(o=>({u:o.u, d:o.d*fBack}));
+      drawPoleWorld(polePts({x:0,y:0}, {x:Math.cos(ang)*len, y:Math.max(0.1,Math.sin(ang)*len)}, shB, c0, A.fit.xside, A.fit.s + (1 - A.fit.s)*eb), id, 0.03, 'lift');
+    }
+  }
+  drawFigure(v.x, v.y, v.beta, v.run, A.t, v.mir, v.tuck);
+  drawPostFront(bar, A.barFall);
+}
+
+// ===== 1回ぶんの再生 =====
+let rafT = performance.now();
+function frame(now){
+  const dt = Math.min(0.05, (now-rafT)/1000); rafT = now;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  const A = scene.anim;
+  if(A){ stepAnim(A, dt); const v = vaulterAt(A);
+    if(v.run){
+      // 走るとき：選手と、描いたままの竿がまるごと入るように
+      const P0 = A.st.pts, hand = P0[A.st.handIdx];
+      let l = -0.8, r = 0.6, top = 0.6;
+      A.carry.pts.forEach(p=>{ l = Math.min(l, p.x); r = Math.max(r, p.x); top = Math.max(top, p.y); });
+      (A.runPts||[]).forEach(p=>{ l = Math.min(l, p.x); r = Math.max(r, p.x); top = Math.max(top, p.y); });
+      const left = v.x + l - 0.6, right = v.x + r + 0.6;
+      setCamera((left+right)/2, 0, A.bar, v.y + top + 0.5, right - left, v.x);
+    } else setCamera(Math.max(v.x + 1.2, -60), 0, A.bar, 0, 0, v.x);
+  } else setCamera(scene.mode==='draw' ? 1.0 : 0.5, 0, G_.bar);
+  drawWorld(A);
+  if(scene.mode==='title' || scene.mode==='titleDemo'){ /* 見本は上に半透明のタイトルが重なる */ }
+  requestAnimationFrame(frame);
+}
+function stepAnim(A, dt){
+  if(A.done) { A.holdT = (A.holdT||0)+dt; A.t += dt; if(A.demo && A.holdT>1.6) startDemo(); return; }
+  const prevT = A.t; A.t += dt;
+  const ev = A.events, sfx = !A.demo;
+  if(A.t < A.T){ if(sfx && Math.floor(A.t*5.5)!==Math.floor(prevT*5.5)) SFX.step(); return; }
+  if(!ev.plant){ ev.plant=true; if(sfx) SFX.plant(); }
+  const v = vaulterAt(A);
+  A.trail.push({x:v.x,y:v.y}); if(v.y>A.peak) A.peak=v.y;
+  if(!A.demo){ $('hNow').textContent = v.y.toFixed(2); $('hPeak').textContent = A.peak.toFixed(2); }
+  if(v.phase==='fly' && !ev.rel){ ev.rel=true; if(sfx) SFX.release(); }
+  if(v.f && v.f.open && !ev.kasa){ ev.kasa=true; if(sfx) SFX.kasa(); }
+  if(A.sim.result==='break' && v.phase==='fall' && !ev.snap){ ev.snap=true; if(sfx) SFX.snap(); }
+  const jd = A.jd;
+  if(jd.kind==='hit' && A.barFall===0 && (A.t - A.T)*60 >= jd.contactI) A.barFall = 0.001;
+  if(A.barFall>0 && A.barFall<1) A.barFall = Math.min(1, A.barFall + dt*2.5);
+  const fr = A.sim.frames;
+  if((A.t-A.T)*60 >= fr.length-1){
+    A.done = true;
+    if(sfx){ SFX.mat(); setTimeout(()=> jd.ok ? SFX.clear() : SFX.fail(), 180); setTimeout(()=>showResult(A), 650); }
+  }
+}
+
+function jump(){
+  if(!analysis) return; ac();
+  const miracle = ITEMS[curItem].special==='miracle' && Math.random() < CFG.mir;
+  const A = makeAnim(curItem, analysis, G_.bar, { miracle });
+  A.artRev = padRev; A.drawPts = stroke.map(p=>({x:p.x, y:p.y}));
+  scene.anim = A; scene.mode='vault'; scene.camX=null;
+  show('hud'); $('hItem').textContent = ITEMS[curItem].name; $('hBar').textContent = fmt(G_.bar); $('hTry').textContent = `${G_.tryNo}回目`;
+  $('hNow').textContent='0.00'; $('hPeak').textContent='0.00'; document.querySelector('#hud .meter').hidden = false;
+}
+$('bJump').onclick = jump;
+
+const MSG = {
+  clear: (it)=>['クリア！', `${it.name}で跳べた`],
+  break: (it)=>[`${it.name}が折れた`, { monosashi:'しなりすぎた。', straw:'ストローなので。', kasa:'骨がもたなかった。', sao:'まさかの。', take:'竹にも限界はある。', tsuri:'釣り竿にも限界はある。', houki:'柄がもたなかった。', enpitsu:'ぽきっ。', ami:'柄がもたなかった。', magonote:'背中をかく道具なので。' }[it.id] || 'まさかの。'],
+  back:  (it)=>['戻された', it.id==='hose' ? 'ぐにゃっとなって、前に進めなかった。' : (it.rigid>=0.3 ? '硬すぎて、しならなかった。短めに描くと…？' : 'バーの手前まで届かなかった。長すぎたかも。')],
+  hit:   (it)=>['バーに当たった', 'あと少し。'],
+  low:   (it)=>['高さが足りない', 'バーの下をくぐった。もう少し長く描くと…？'],
+  short: (it)=>['バーに届かなかった', '前に進む勢いが足りなかった。'],
+  over:  (it)=>['高さが足りない', 'もう少し長く描くと…？'],
+};
+function showResult(A){
+  const it = ITEMS[A.itemId], jd = A.jd;
+  let [big, sub] = (MSG[jd.kind]||MSG.low)(it);
+  // マットの外に落ちたとき（見えない壁はないので、勢いがあればここまで飛ぶ）
+  const fr = A.sim.frames, landX = fr[fr.length-1].x, over = landX > MAT_X1;
+  if(over) sub = jd.ok ? `跳べた。でも、マットを飛び越えて ${landX.toFixed(1)}m 先の芝へ。` : `${sub}　しかもマットを飛び越えて ${landX.toFixed(1)}m 先の芝へ。`;
+  G_.log.push({ bar:A.bar, item:A.itemId, form:A.st.form, ok:jd.ok, kind:jd.kind, peak:A.peak, miracle:A.miracle, pts:A.drawPts||null, rev:!!A.artRev, L:A.st.L });
+  G_.last = A.itemId;
+  let next, nextLbl;
+  if(jd.ok){ G_.best = { bar:A.bar, item:A.itemId }; next = ()=>{ G_.bar = Math.round((G_.bar+CFG.step)*100)/100; G_.tryNo=1; toDraw(); }; nextLbl = `次の高さ ${fmt(Math.round((A.bar+CFG.step)*100)/100)} へ`; }
+  else if(G_.tryNo>=3){ next = toEnd; nextLbl = '記録を見る'; }
+  else { next = ()=>{ G_.tryNo++; toDraw(); }; nextLbl = `${G_.tryNo+1}回目へ`; }
+  const r = $('res');
+  r.innerHTML = `${A.miracle && jd.ok ? '<div class="miracle">奇跡のストロー</div>':''}
+    <div class="big ${jd.ok?'ok':'ng'}">${big}</div><div class="sub">${sub}</div>
+    <div class="nums"><span>最高<b>${A.peak.toFixed(2)}m</b></span><span>竿の長さ<b>${A.st.L.toFixed(1)}m</b></span><span>形<b class="jp">${FORMS[A.st.form].name}</b></span></div>
+    <button class="btn go" id="bNext">${nextLbl}</button>`;
+  r.hidden = false; document.querySelector('#hud .meter').hidden = true;
+  $('bNext').onclick = ()=>{ SFX.tick(); scene.anim=null; next(); };
+}
+function toEnd(){
+  show('end'); scene.anim=null; scene.mode='draw';
+  $('eRec').innerHTML = G_.best ? fmt(G_.best.bar).replace('m','<small>m</small>') : '記録なし';
+  $('eWith').textContent = G_.best ? `${ITEMS[G_.best.item].name}で跳んだ` : '今回は、竿に恵まれなかった。';
+  const MK_OK = '<svg class="mark" viewBox="0 0 24 24" aria-label="成功"><circle cx="12" cy="12" r="8" fill="none" stroke="#2F8F5B" stroke-width="3.2"/></svg>';
+  const MK_NG = '<svg class="mark" viewBox="0 0 24 24" aria-label="失敗"><path d="M5.5 5.5 18.5 18.5M18.5 5.5 5.5 18.5" fill="none" stroke="#C23B2A" stroke-width="3.2" stroke-linecap="round"/></svg>';
+  $('eTbl').innerHTML = G_.log.map((l,i)=>`<tr><td class="n">${fmt(l.bar)}</td><td class="it" data-i="${i}"><span>${ITEMS[l.item].name}${l.miracle&&l.ok?'（奇跡）':''}<span class="fm">${FORMS[l.form].name}</span></span></td><td class="n">${l.peak.toFixed(2)}m</td><td class="mk">${l.ok?MK_OK:MK_NG}</td></tr>`).join('');
+  $('eTbl').querySelectorAll('td.it').forEach(td=> td.prepend(iconCanvas(G_.log[+td.dataset.i].item, 24)));
+  prepareShare();
+  endAt = performance.now();
+  try{ sessionStorage.setItem(END_KEY, JSON.stringify({ t:Date.now(), log:G_.log, best:G_.best })); }catch(e){}
+}
+// 記録画面は、出てすぐの0.7秒は押せない（「記録を見る」を続けて押したとき、下にあった「タイトルへ」まで押されないように）
+let endAt = 0; const endReady = ()=> performance.now() - endAt > 700;
+// 共有などで画面を離れているあいだにページが読み込み直されても、記録画面に戻れるようにしておく
+const END_KEY = 'nandemo-vault-end';
+const clearEnd = ()=>{ try{ sessionStorage.removeItem(END_KEY); }catch(e){} };
+$('bAgain').onclick = ()=>{ if(!endReady()) return; clearEnd(); newGame(); toDraw(); };
+$('bTitle').onclick = ()=>{ if(!endReady()) return; clearEnd(); show('title'); startDemo(); };
+$('bStart').onclick = ()=>{ ac(); SFX.tick(); clearEnd(); newGame(); toDraw(); };
+
+// ===== タイトルの見本 =====
+const DEMOS = [
+  { id:'take', L:4.4, b:0.03 }, { id:'kasa', L:3.4, b:0.05 }, { id:'straw', L:4.0, b:0.1 }, { id:'monosashi', L:3.6, b:0.04 }, { id:'enpitsu', L:3.8, b:0.03 }, { id:'tsuppari', L:4.6, b:0.0 }, { id:'houki', L:3.5, b:0.03 }, { id:'hose', L:4.0, b:0.08 },
+];
+let demoI = 0;
+function startDemo(){
+  if($('title').hidden) return;
+  const d = DEMOS[demoI++ % DEMOS.length];
+  const pts=[]; for(let i=0;i<=30;i++){ const u=i/30; pts.push({x:u*d.L, y:d.b*d.L*Math.sin(Math.PI*u)}); }
+  scene.anim = makeAnim(d.id, analyzeStroke(pts), 2.6, { demo:true }); scene.mode='title'; scene.camX=null;
+}
+
+// ===== 共有（記録カードとXへのポスト） =====
+const SITE_URL = 'https://nandemo-polevault.pages.dev/';
+const TAG = '#なんでも棒高跳び';
+const CATCH = '竿は選べない。形だけ、描ける。';
+let SHARE = { file:null, url:null, text:'' };
+function shareFocus(){
+  // 記録があれば、いちばん高いバーを跳んだ回。なければ、いちばん高く上がった回
+  const ok = G_.log.filter(l=>l.ok);
+  if(ok.length) return { best:true, l: ok.reduce((a,b)=> b.bar>=a.bar ? b : a) };
+  if(!G_.log.length) return { best:false, l:null };
+  return { best:false, l: G_.log.reduce((a,b)=> b.peak>a.peak ? b : a) };
+}
+function shareText(){
+  const f = shareFocus(), l = f.l;
+  let head;
+  if(f.best) head = `${ITEMS[l.item].name}で ${fmt(l.bar)} 跳んだ（${FORMS[l.form].name}）`;
+  else if(l) head = `今回は記録なし。${ITEMS[l.item].name}で ${l.peak.toFixed(2)}m まで上がった`;
+  else head = '今回は記録なし';
+  return `${head}\n${CATCH}\n${TAG}\n${SITE_URL}`;
+}
+function drawCard(){
+  const W=1200, H=630, cv=document.createElement('canvas'); cv.width=W; cv.height=H; const c=cv.getContext('2d');
+  const INK='#1D2433', INK2='#4A5468', PAPER='#FBF8F1', SIG='#F2C230', TAR='#C4553A', OK='#2F8F5B', NG='#C23B2A';
+  const JP="'M PLUS 2',system-ui,sans-serif", NUM="'Barlow Condensed','M PLUS 2',system-ui,sans-serif", POP="'Mochiy Pop P One','Mochiy Pop One','M PLUS 2',sans-serif";
+  const f = shareFocus(), l = f.l;
+  c.fillStyle=INK; c.fillRect(0,0,W,H);
+  c.fillStyle=TAR; c.fillRect(0,H-26,W,26);
+  c.fillStyle='#ffffff22'; for(let x=0;x<W;x+=120){ c.fillRect(x,H-26,3,26); }
+  // 左：屋号と記録
+  const X=72;
+  c.fillStyle=PAPER; c.font=`40px ${POP}`; c.textBaseline='alphabetic'; c.fillText('なんでも棒高跳び', X, 104);
+  c.fillStyle=SIG; c.fillRect(X, 124, 64, 6);
+  c.fillStyle='#FBF8F1bb'; c.font=`800 28px ${JP}`; c.fillText('今回の記録', X, 190);
+  if(f.best){
+    const r = fmt(l.bar), i = r.indexOf('m'), a=r.slice(0,i), b=r.slice(i+1);
+    c.fillStyle=SIG; c.font=`800 210px ${NUM}`; c.fillText(a, X-6, 384); let x = X-6 + c.measureText(a).width + 6;
+    c.font=`800 86px ${NUM}`; c.fillText('m', x, 384); x += c.measureText('m').width + 6;
+    c.font=`800 210px ${NUM}`; c.fillText(b, x, 384);
+  } else {
+    c.fillStyle=SIG; c.font=`800 104px ${JP}`; c.fillText('記録なし', X, 360);
+  }
+  c.fillStyle=PAPER; c.font=`800 38px ${JP}`;
+  let sub = '';
+  if(f.best) sub = `${ITEMS[l.item].name}で跳んだ`;
+  else if(l) sub = `${ITEMS[l.item].name}で ${l.peak.toFixed(2)}m まで`;
+  c.fillText(sub, X, 448);
+  if(l){ const sw=c.measureText(sub).width; c.font=`800 24px ${JP}`; const fm=FORMS[l.form].name, fw=c.measureText(fm).width+28;
+    c.fillStyle='#ffffff1f'; c.beginPath(); c.roundRect ? c.roundRect(X+sw+16, 418, fw, 40, 20) : c.rect(X+sw+16, 418, fw, 40); c.fill();
+    c.fillStyle=PAPER; c.fillText(fm, X+sw+30, 447); }
+  // 試技の○×
+  const log = G_.log.slice(-18); let mx = X;
+  log.forEach(e=>{ c.lineWidth=5; c.lineCap='round';
+    if(e.ok){ c.strokeStyle='#5FC48A'; c.beginPath(); c.arc(mx+14, 510, 11, 0, Math.PI*2); c.stroke(); }
+    else { c.strokeStyle='#E8705E'; c.beginPath(); c.moveTo(mx+4,500); c.lineTo(mx+24,520); c.moveTo(mx+24,500); c.lineTo(mx+4,520); c.stroke(); }
+    mx += 36; });
+  c.fillStyle='#FBF8F1aa'; c.font=`800 24px ${JP}`; c.fillText(`${TAG}　${SITE_URL.replace(/^https?:\/\//,'').replace(/\/$/,'')}`, X, 576);
+  // 右：描いた竿だけを大きく（方眼紙・人・バーは置かない）。長さは上に
+  const BX=660, BY=230, BW=470, BH=320;
+  const pts = l && l.pts ? l.pts : null;
+  if(pts && pts.length>1){
+    c.font=`800 44px ${NUM}`; const lt = `${(l.L||0).toFixed(1)}m`, ltw = c.measureText(lt).width;
+    c.fillStyle=PAPER; c.fillText(lt, BX+BW-ltw, 192);
+    c.fillStyle='#FBF8F1bb'; c.font=`800 28px ${JP}`; const lw = c.measureText('描いた竿').width; c.fillText('描いた竿', BX+BW-ltw-14-lw, 190);
+    let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9; pts.forEach(p=>{ x0=Math.min(x0,p.x); x1=Math.max(x1,p.x); y0=Math.min(y0,p.y); y1=Math.max(y1,p.y); });
+    const m = Math.min(BW/Math.max(0.5,x1-x0), BH/Math.max(0.5,y1-y0), 150);
+    const ox = BX + (BW-(x1-x0)*m)/2 - x0*m, oy = BY + BH - (BH-(y1-y0)*m)/2 + y0*m;
+    let q = pts.map(p=>({x:ox+p.x*m, y:oy-p.y*m})); if(l.rev) q = q.reverse();
+    c.save(); c.shadowColor='#0008'; c.shadowBlur=24; c.shadowOffsetY=8;
+    drawItemStroke(c, q, l.item, Math.max(14, Math.min(34, (POLE_W[l.item]||0.1)*m)));
+    c.restore();
+      }
+  return cv;
+}
+function prepareShare(){
+  SHARE = { file:null, url:null, text:shareText() };
+  const go = ()=>{ try{
+    const cv = drawCard(); SHARE.url = cv.toDataURL('image/png');
+    cv.toBlob(b=>{ if(b){ try{ SHARE.file = new File([b], 'nandemo-polevault.png', { type:'image/png' }); }catch(e){} } }, 'image/png');
+  }catch(e){} };
+  if(document.fonts && document.fonts.load){
+    Promise.all(["800 100px 'Barlow Condensed'", "800 30px 'M PLUS 2'", "40px 'Mochiy Pop P One'"].map(f=>document.fonts.load(f, '0123456789mなんでも棒高跳び記録').catch(()=>{}))).then(go, go);
+  } else go();
+}
+$('bShare').onclick = async ()=>{
+  if(!endReady()) return;
+  SFX.tick();
+  const text = SHARE.text || shareText();
+  if(SHARE.file && navigator.canShare && navigator.canShare({ files:[SHARE.file] })){
+    try{ await navigator.share({ files:[SHARE.file], text }); return; }catch(e){ if(e && e.name==='AbortError') return; }
+  }
+  if(!SHARE.url){ try{ SHARE.url = drawCard().toDataURL('image/png'); }catch(e){} }
+  if(SHARE.url){ $('shotImg').src = SHARE.url; $('shotDl').href = SHARE.url; $('shot').hidden = false; }
+  else if(navigator.share){ try{ await navigator.share({ text }); }catch(e){} }
+};
+$('shotClose').onclick = ()=>{ $('shot').hidden = true; };
+$('bPost').onclick = ()=>{
+  if(!endReady()) return;
+  SFX.tick();
+  const u = 'https://x.com/intent/post?text=' + encodeURIComponent(SHARE.text || shareText());
+  window.open(u, '_blank', 'noopener');
+};
+
+// ===== 音の切りかえ =====
+function syncSnd(){ const b=$('snd'); b.querySelector('b').textContent = CFG.sound?'ON':'OFF'; b.classList.toggle('off',!CFG.sound); b.setAttribute('aria-pressed', CFG.sound?'true':'false'); }
+$('snd').onclick = ()=>{ CFG.sound=!CFG.sound; try{ localStorage.setItem('nandemo-vault-sound', CFG.sound?'on':'off'); }catch(e){} syncSnd(); if(CFG.sound) tone(880,0.08,'triangle',0.12); };
+syncSnd(); $('snd').hidden = $('title').hidden;
+
+(()=>{ const lu = $('lineup'); ITEM_IDS.forEach(id=>{ const f = document.createElement('figure'); f.appendChild(iconCanvas(id, 50)); const c = document.createElement('figcaption'); c.textContent = ITEMS[id].name; f.appendChild(c); lu.appendChild(f); }); $('nItems').textContent = ITEM_IDS.length + '種'; })();
+resize(); startDemo(); requestAnimationFrame(frame);
+// 記録画面のまま読み込み直されたとき（30分以内）は、記録画面から再開する
+try{ const sv = JSON.parse(sessionStorage.getItem(END_KEY)||'null');
+  if(sv && Date.now()-sv.t < 30*60*1000 && Array.isArray(sv.log) && sv.log.length && sv.log.every(l=> ITEMS[l.item] && FORMS[l.form])){ G_.log = sv.log; G_.best = sv.best; toEnd(); endAt = 0; } }catch(e){}
+})();
+</script>
+
+</body>
+</html>
